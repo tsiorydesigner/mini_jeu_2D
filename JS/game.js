@@ -118,6 +118,24 @@ function levelMapFor(level) {
 function overlap(a, b) { return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y; }
 function difficultyScale() { return difficulty === 'easy' ? 0.82 : difficulty === 'hard' ? 1.25 : 1; }
 
+function hexToRgb(hex) {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return { r, g, b };
+}
+function rgbToHex(r, g, b) {
+    return '#' + [r, g, b].map(v => Math.max(0, Math.min(255, v)).toString(16).padStart(2, '0')).join('');
+}
+function lightenColor(hex, amount) {
+    const { r, g, b } = hexToRgb(hex);
+    return rgbToHex(r + amount, g + amount, b + amount);
+}
+function darkenColor(hex, amount) {
+    const { r, g, b } = hexToRgb(hex);
+    return rgbToHex(r - amount, g - amount, b - amount);
+}
+
 function saveGame() {
     const data = { unlockedLevel, bestTimes, options: { freeMode, difficulty, volume, selectedCharacter } };
     localStorage.setItem(SAVE_KEY, JSON.stringify(data));
@@ -261,22 +279,97 @@ function loadLevel(level) {
     currentLevel = level;
     currentTheme = themes[level - 1];
     parseLevel(levelMapFor(level));
+    
+    // Démarrer les sons ambiants pour le thème actuel
+    if (typeof audioManager !== 'undefined') {
+        const themeNames = ['forest', 'cave', 'lava', 'ice', 'city', 'space'];
+        const themeName = themeNames[(level - 1) % themeNames.length];
+        audioManager.startAmbient(themeName);
+        audioManager.startMusic();
+        
+        // Ajuster l'intensité selon le niveau
+        if (level <= 3) {
+            audioManager.setIntensity('calm');
+        } else if (level <= 7) {
+            audioManager.setIntensity('normal');
+        } else if (level < 10) {
+            audioManager.setIntensity('intense');
+        } else {
+            audioManager.setIntensity('boss');
+        }
+    }
+    
+    // Ajouter les vies supplémentaires du magasin
+    if (typeof shopManager !== 'undefined') {
+        const extraLives = shopManager.extraLives;
+        if (extraLives > 0) {
+            lives += extraLives;
+            shopManager.extraLives = 0;
+            shopManager.saveProgress();
+        }
+    }
+    
     respawn();
     camera.x = 0; camera.y = 0;
     levelStartMs = performance.now();
     updateHUD();
+    
+    // Notifier le système d'accomplissements du début du niveau
+    if (typeof achievementManager !== 'undefined') {
+        achievementManager.onLevelStart();
+    }
 }
 
 function addParticle(x, y, color, n = 10) {
-    for (let i = 0; i < n; i++) particles.push({ x, y, vx: (Math.random() - 0.5) * 4, vy: (Math.random() - 0.5) * 4, life: 26, color });
+    // Utiliser les particules équipées du magasin
+    let particleColors = [color];
+    if (typeof shopManager !== 'undefined' && shopManager.equipped.particle !== 'default') {
+        const particleEffect = shopManager.items.get(shopManager.equipped.particle);
+        if (particleEffect && particleEffect.colors) {
+            particleColors = particleEffect.colors;
+        }
+    }
+    
+    for (let i = 0; i < n; i++) {
+        const selectedColor = particleColors[Math.floor(Math.random() * particleColors.length)];
+        particles.push({ x, y, vx: (Math.random() - 0.5) * 4, vy: (Math.random() - 0.5) * 4, life: 26, color: selectedColor });
+    }
 }
 function loseLife() {
     if (player.invincible > 0) return;
     if (player.powerShield > 0) { player.powerShield--; player.invincible = 40; return; }
+    
+    // Utiliser une vie supplémentaire du magasin si disponible
+    if (typeof shopManager !== 'undefined' && shopManager.extraLives > 0) {
+        shopManager.extraLives--;
+        shopManager.saveProgress();
+        player.invincible = 80;
+        addParticle(player.x + 10, player.y + 10, '#00ff00', 20);
+        beep(440, 0.1);
+        updateHUD();
+        return;
+    }
+    
     lives--;
     updateHUD();
     addParticle(player.x + 10, player.y + 10, '#ff5555', 18);
-    if (lives <= 0) { gameState = STATE.GAME_OVER; stopThemeMusic(); showOverlay('Game Over', `Score: ${score}`, 'Rejouer'); return; }
+    
+    // Notifier le système d'accomplissements des dégâts
+    if (typeof achievementManager !== 'undefined') {
+        achievementManager.onDamageTaken();
+    }
+    
+    if (lives <= 0) { 
+        gameState = STATE.GAME_OVER; 
+        stopThemeMusic(); 
+        // Arrêter les sons ambiants
+        if (typeof audioManager !== 'undefined') {
+            audioManager.stopAmbient();
+            audioManager.stopMusic();
+        }
+        showOverlay('Game Over', `Score: ${score}`, 'Rejouer'); 
+        return; 
+    }
     respawn();
 }
 function playerJumpPressed() { return keys['ArrowUp'] || keys[' ']; }
@@ -355,6 +448,11 @@ function updateEnemies() {
                 addParticle(e.x + 10, e.y + 10, '#ff7b7b', 14);
                 beep(620, 0.04);
                 updateHUD();
+                
+                // Accomplissement: ennemi tué
+                if (typeof achievementManager !== 'undefined') {
+                    achievementManager.onEnemyKilled();
+                }
             } else loseLife();
         }
     }
@@ -393,6 +491,17 @@ function updateInteractions() {
         addParticle(c.x + 7, c.y + 7, currentTheme.coin, 8);
         beep(800, 0.03);
         updateHUD();
+        
+        // Accomplissement: pièce collectée
+        if (typeof achievementManager !== 'undefined') {
+            achievementManager.onCoinCollected();
+        }
+        
+        // Magasin: ajouter pièce
+        if (typeof shopManager !== 'undefined') {
+            shopManager.coins++;
+            shopManager.saveProgress();
+        }
     }
     for (const s of spikes) if (overlap(player, s)) loseLife();
     for (const p of powerups) {
@@ -405,6 +514,11 @@ function updateInteractions() {
         if (!overlap(player, k)) continue;
         k.active = true;
         checkpoint = { x: k.x, y: k.y - 8 };
+        
+        // Accomplissement: checkpoint atteint
+        if (typeof achievementManager !== 'undefined') {
+            achievementManager.onCheckpointReached();
+        }
     }
 }
 
@@ -422,15 +536,25 @@ function tryFinishLevel() {
         unlockedLevel = TOTAL_LEVELS;
         saveGame();
         stopThemeMusic();
+        // Arrêter les sons ambiants à la victoire
+        if (typeof audioManager !== 'undefined') {
+            audioManager.stopAmbient();
+            audioManager.stopMusic();
+        }
         showOverlay('Victoire', `Score final ${score} | Boss vaincu`, 'Rejouer');
         return;
     }
     unlockedLevel = Math.max(unlockedLevel, currentLevel + 1);
     saveGame();
     
-    // Gagner un niveau et débloquer des compétences
+    // Gagner un niveau et débloquer des compétences et accomplissements
     if (typeof onPlayerLevelUp === 'function') {
         onPlayerLevelUp();
+    }
+    
+    // Accomplissement: niveau complété
+    if (typeof achievementManager !== 'undefined') {
+        achievementManager.onLevelComplete(currentLevel);
     }
     
     gameState = STATE.LEVEL_CLEAR;
@@ -523,14 +647,45 @@ function drawBoss() {
 function drawPlayer() {
     if (player.invincible > 0 && Math.floor(frame / 4) % 2 === 0) return;
     const sx = player.x - camera.x, sy = player.y - camera.y;
-    const palette = {
-        runner: { body: '#3498db', head: '#f5cba7', legs: '#2c3e50' },
-        ninja: { body: '#1f2937', head: '#f1c27d', legs: '#111827' },
-        robot: { body: '#6c757d', head: '#ced4da', legs: '#495057' },
-    }[selectedCharacter];
-    ctx.fillStyle = palette.body; ctx.fillRect(sx, sy + 14, player.w, 14);
-    ctx.fillStyle = palette.head; ctx.fillRect(sx + 4, sy + 2, 20, 14);
-    ctx.fillStyle = palette.legs; ctx.fillRect(sx + 5, sy + 28, 7, 8); ctx.fillRect(sx + 16, sy + 28, 7, 8);
+    
+    // Utiliser le skin équipé du magasin
+    let bodyColor, headColor, legsColor;
+    if (typeof shopManager !== 'undefined' && shopManager.equipped.skin !== 'default') {
+        const skin = shopManager.items.get(shopManager.equipped.skin);
+        if (skin) {
+            if (skin.color === 'rainbow') {
+                const hue = (frame * 2) % 360;
+                bodyColor = `hsl(${hue}, 100%, 50%)`;
+                headColor = `hsl(${(hue + 30) % 360}, 100%, 70%)`;
+                legsColor = `hsl(${(hue + 60) % 360}, 100%, 40%)`;
+            } else {
+                const c = skin.color;
+                bodyColor = c;
+                headColor = lightenColor(c, 40);
+                legsColor = darkenColor(c, 40);
+            }
+        }
+    } else {
+        // Palette par défaut selon le personnage
+        const palette = {
+            runner: { body: '#3498db', head: '#e8b4b4', legs: '#2c3e50' },
+            ninja: { body: '#2d3436', head: '#b8b8b8', legs: '#1a1a2e' },
+            robot: { body: '#636e72', head: '#dfe6e9', legs: '#2d3436' },
+            mage: { body: '#9b59b6', head: '#e8b4b4', legs: '#8e44ad' },
+            knight: { body: '#95a5a6', head: '#ecf0f1', legs: '#7f8c8d' },
+            alien: { body: '#27ae60', head: '#2ecc71', legs: '#1e8449' },
+            pirate: { body: '#8B4513', head: '#e8b4b4', legs: '#2c3e50' },
+            samurai: { body: '#c0392b', head: '#e8b4b4', legs: '#641E16' },
+            cyborg: { body: '#1abc9c', head: '#bdc3c7', legs: '#16a085' },
+        }[selectedCharacter] || { body: '#3498db', head: '#e8b4b4', legs: '#2c3e50' };
+        bodyColor = palette.body;
+        headColor = palette.head;
+        legsColor = palette.legs;
+    }
+    
+    ctx.fillStyle = bodyColor; ctx.fillRect(sx, sy + 14, player.w, 14);
+    ctx.fillStyle = headColor; ctx.fillRect(sx + 4, sy + 2, 20, 14);
+    ctx.fillStyle = legsColor; ctx.fillRect(sx + 5, sy + 28, 7, 8); ctx.fillRect(sx + 16, sy + 28, 7, 8);
     if (player.powerShield > 0) {
         ctx.strokeStyle = '#56e8ff';
         ctx.lineWidth = 2;
@@ -559,6 +714,11 @@ function updateHUD() {
     const bt = bestTimes[currentLevel] ? ` • best ${bestTimes[currentLevel]}s` : '';
     const bossTag = boss && boss.alive ? ' • BOSS' : '';
     levelDisplay.textContent = `${currentLevel}/${TOTAL_LEVELS} ${themes[currentLevel - 1].name}${bt}${bossTag}`;
+    
+    // Mettre à jour le porte-monnaie du magasin si l'UI est ouverte
+    if (typeof shopUI !== 'undefined' && shopUI.walletAmount) {
+        shopUI.updateWallet();
+    }
 }
 function showOverlay(title, message, btnText) {
     overlayTitle.textContent = title;
@@ -591,6 +751,11 @@ function initGame() {
     updateHUD();
 }
 function startGame() {
+    // Résumé du contexte audio (nécessaire après interaction utilisateur)
+    if (typeof audioManager !== 'undefined') {
+        audioManager.resumeContext();
+    }
+    
     if (gameState === STATE.LEVEL_CLEAR) loadLevel(currentLevel + 1);
     else initGame();
     gameState = STATE.PLAYING;

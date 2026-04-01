@@ -1,0 +1,362 @@
+/* Styles pour le système de Magasin/Boutique */
+
+/* Panneau du magasin */
+.shop-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, #2d1b4e 0%, #1a1a2e 100%);
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    max-width: 800px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    border: 2px solid rgba(255, 215, 0, 0.3);
+}
+
+.shop-panel h2 {
+    color: #FFD700;
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 2em;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+/* Porte-monnaie */
+.shop-wallet {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.1));
+    border: 2px solid rgba(255, 215, 0, 0.4);
+    border-radius: 15px;
+    padding: 15px;
+    text-align: center;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.shop-wallet-icon {
+    font-size: 1.5em;
+}
+
+.shop-wallet-text {
+    color: #FFD700;
+    font-size: 1.3em;
+    font-weight: bold;
+}
+
+.shop-wallet-amount {
+    color: #fff;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+/* Onglets de catégories */
+.shop-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.shop-tab {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.shop-tab:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.shop-tab.active {
+    background: rgba(255, 215, 0, 0.3);
+    border-color: #FFD700;
+    color: #FFD700;
+}
+
+/* Grille d'articles */
+.shop-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+/* Carte d'article */
+.shop-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.shop-item:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 215, 0, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.shop-item.owned {
+    background: rgba(76, 175, 80, 0.1);
+    border-color: #4CAF50;
+}
+
+.shop-item.equipped {
+    background: rgba(255, 215, 0, 0.15);
+    border-color: #FFD700;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+}
+
+.shop-item.locked {
+    opacity: 0.6;
+}
+
+.shop-item .rarity-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 0.7em;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.rarity-common {
+    background: rgba(169, 169, 169, 0.3);
+    color: #A9A9A9;
+}
+
+.rarity-rare {
+    background: rgba(30, 144, 255, 0.3);
+    color: #1E90FF;
+}
+
+.rarity-epic {
+    background: rgba(148, 0, 211, 0.3);
+    color: #9400D3;
+}
+
+.rarity-legendary {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 140, 0, 0.3));
+    color: #FFD700;
+}
+
+.shop-item .icon {
+    font-size: 3em;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.shop-item .name {
+    color: white;
+    font-weight: bold;
+    font-size: 1.1em;
+    margin-bottom: 8px;
+}
+
+.shop-item .description {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85em;
+    margin-bottom: 12px;
+    min-height: 40px;
+}
+
+.shop-item .price {
+    color: #FFD700;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.shop-item .price::before {
+    content: '🪙 ';
+}
+
+.shop-item .status {
+    font-size: 0.9em;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 15px;
+    display: inline-block;
+}
+
+.shop-item.owned .status {
+    background: rgba(76, 175, 80, 0.3);
+    color: #4CAF50;
+}
+
+.shop-item.equipped .status {
+    background: rgba(255, 215, 0, 0.3);
+    color: #FFD700;
+}
+
+/* Boutons d'action */
+.shop-item-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.shop-btn {
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.shop-btn-buy {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #4a3728;
+}
+
+.shop-btn-buy:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+}
+
+.shop-btn-buy:disabled {
+    background: rgba(128, 128, 128, 0.3);
+    color: #888;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.shop-btn-equip {
+    background: rgba(76, 175, 80, 0.3);
+    color: #4CAF50;
+    border: 2px solid #4CAF50;
+}
+
+.shop-btn-equip:hover {
+    background: rgba(76, 175, 80, 0.5);
+}
+
+.shop-btn-equipped {
+    background: rgba(255, 215, 0, 0.3);
+    color: #FFD700;
+    border: 2px solid #FFD700;
+}
+
+/* Vies supplémentaires */
+.shop-lives-counter {
+    background: rgba(255, 100, 100, 0.2);
+    border: 2px solid rgba(255, 100, 100, 0.4);
+    border-radius: 15px;
+    padding: 10px;
+    text-align: center;
+    color: white;
+    margin-bottom: 15px;
+}
+
+.shop-lives-counter span {
+    color: #ff6464;
+    font-weight: bold;
+}
+
+/* Contrôles du magasin */
+.shop-controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.shop-control-btn {
+    background: rgba(255, 215, 0, 0.2);
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    color: #FFD700;
+    padding: 12px 25px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.shop-control-btn:hover {
+    background: rgba(255, 215, 0, 0.3);
+    transform: scale(1.05);
+}
+
+/* Bouton Magasin dans le menu */
+#shopBtn {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #4a3728;
+    border: none;
+    font-weight: bold;
+}
+
+#shopBtn:hover {
+    background: linear-gradient(135deg, #FFE55C, #FFB84D);
+    transform: scale(1.05);
+}
+
+/* Notification d'achat */
+.shop-notification {
+    position: fixed;
+    top: 20px;
+    right: -400px;
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    border-radius: 15px;
+    padding: 15px 20px;
+    box-shadow: 0 10px 40px rgba(76, 175, 80, 0.4);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: right 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.shop-notification.show {
+    right: 20px;
+}
+
+.shop-notification.error {
+    background: linear-gradient(135deg, #f44336, #d32f2f);
+    box-shadow: 0 10px 40px rgba(244, 67, 54, 0.4);
+}
+
+.shop-notification-icon {
+    font-size: 1.5em;
+}
+
+.shop-notification-text {
+    color: white;
+    font-weight: bold;
+}
+
+/* Animation arc-en-ciel pour le skin rainbow */
+@keyframes rainbow {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+}
+
+.shop-item .icon.rainbow {
+    animation: rainbow 2s linear infinite;
+}
+
+/* Caché */
+.hidden {
+    display: none !important;
+}

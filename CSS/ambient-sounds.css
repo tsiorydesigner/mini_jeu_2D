@@ -1,0 +1,269 @@
+/* Styles pour le système de Sons Ambiants */
+
+/* Panneau de contrôle audio */
+.audio-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    max-width: 500px;
+    width: 90%;
+    border: 2px solid rgba(100, 200, 255, 0.3);
+}
+
+.audio-panel h2 {
+    color: #64c8ff;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.8em;
+    text-shadow: 0 0 20px rgba(100, 200, 255, 0.5);
+}
+
+/* Statut audio */
+.audio-status {
+    background: rgba(100, 200, 255, 0.1);
+    border: 2px solid rgba(100, 200, 255, 0.3);
+    border-radius: 15px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.audio-status-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    color: #fff;
+}
+
+.audio-status-item:last-child {
+    margin-bottom: 0;
+}
+
+.audio-status-label {
+    font-weight: bold;
+    color: #64c8ff;
+}
+
+.audio-status-value {
+    color: #fff;
+    background: rgba(100, 200, 255, 0.2);
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 0.9em;
+}
+
+/* Contrôles de volume */
+.audio-controls {
+    margin-bottom: 20px;
+}
+
+.audio-control-group {
+    margin-bottom: 15px;
+}
+
+.audio-control-group label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #fff;
+    margin-bottom: 8px;
+    font-size: 0.95em;
+}
+
+.audio-control-value {
+    color: #64c8ff;
+    font-weight: bold;
+}
+
+.audio-slider {
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    background: rgba(100, 200, 255, 0.2);
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.audio-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #64c8ff;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(100, 200, 255, 0.5);
+}
+
+.audio-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #64c8ff;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 0 10px rgba(100, 200, 255, 0.5);
+}
+
+/* Boutons d'action */
+.audio-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.audio-btn {
+    padding: 10px 20px;
+    border-radius: 25px;
+    border: 2px solid rgba(100, 200, 255, 0.3);
+    background: rgba(100, 200, 255, 0.1);
+    color: #64c8ff;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.audio-btn:hover {
+    background: rgba(100, 200, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.audio-btn.active {
+    background: rgba(100, 200, 255, 0.3);
+    border-color: #64c8ff;
+}
+
+.audio-btn-mute {
+    border-color: rgba(255, 100, 100, 0.3);
+    color: #ff6464;
+    background: rgba(255, 100, 100, 0.1);
+}
+
+.audio-btn-mute:hover {
+    background: rgba(255, 100, 100, 0.2);
+}
+
+.audio-btn-mute.muted {
+    background: rgba(255, 100, 100, 0.3);
+    border-color: #ff6464;
+}
+
+/* Bouton Audio dans le menu */
+#audioBtn {
+    background: linear-gradient(135deg, #64c8ff, #4a90e2);
+    color: #fff;
+    border: none;
+    font-weight: bold;
+}
+
+#audioBtn:hover {
+    background: linear-gradient(135deg, #7dd3ff, #5aa0f2);
+    transform: scale(1.05);
+}
+
+/* Sélecteur de style musical */
+.music-style-selector {
+    margin-bottom: 20px;
+}
+
+.music-style-selector h3 {
+    color: #64c8ff;
+    font-size: 1.1em;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.music-style-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.music-style-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 8px;
+    border-radius: 12px;
+    border: 2px solid rgba(100, 200, 255, 0.2);
+    background: rgba(100, 200, 255, 0.05);
+    color: #a0c4e0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.music-style-btn:hover {
+    background: rgba(100, 200, 255, 0.12);
+    border-color: rgba(100, 200, 255, 0.4);
+    transform: translateY(-2px);
+}
+
+.music-style-btn.active {
+    background: rgba(100, 200, 255, 0.2);
+    border-color: #64c8ff;
+    color: #fff;
+    box-shadow: 0 0 15px rgba(100, 200, 255, 0.3);
+}
+
+.music-style-icon {
+    font-size: 1.5em;
+}
+
+.music-style-label {
+    font-weight: bold;
+    font-size: 0.95em;
+}
+
+.music-style-desc {
+    font-size: 0.7em;
+    opacity: 0.7;
+    text-align: center;
+    line-height: 1.2;
+}
+
+/* Indicateur audio dans le HUD */
+.audio-indicator {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    color: #64c8ff;
+}
+
+.audio-indicator-icon {
+    font-size: 1.2em;
+}
+
+.audio-indicator-text {
+    font-weight: bold;
+}
+
+/* Animation pour l'indicateur */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.audio-indicator.playing {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* Caché */
+.hidden {
+    display: none !important;
+}

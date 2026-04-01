@@ -6,6 +6,9 @@
     <title>Mod Runner — Jeu</title>
     <link rel="stylesheet" href="CSS/style.css">
     <link rel="stylesheet" href="CSS/skills.css">
+    <link rel="stylesheet" href="CSS/achievements.css">
+    <link rel="stylesheet" href="CSS/shop.css">
+    <link rel="stylesheet" href="CSS/ambient-sounds.css">
 </head>
 <body>
     <div id="game-wrapper">
@@ -17,7 +20,7 @@
 
         <!-- Game container with canvas and overlays -->
         <div id="game-container">
-            <canvas id="gameCanvas" width="800" height="480"></canvas>
+            <canvas id="gameCanvas" width="1024" height="640"></canvas>
 
             <!-- HUD overlay showing score and lives -->
             <div id="hud">
@@ -48,6 +51,9 @@
                     <button id="levelSelectBtn" class="secondary-btn">Selection Niveau</button>
                     <button id="resetProgressBtn" class="secondary-btn">Reset Progression</button>
                     <button id="skillsBtn" class="secondary-btn">Compétences</button>
+                    <button id="achievementsBtn" class="secondary-btn">Accomplissements</button>
+                    <button id="shopBtn" class="secondary-btn">Magasin</button>
+                    <button id="audioBtn" class="secondary-btn">Audio</button>
                     <div id="options-panel">
                         <label>Personnage
                             <div id="characterSelect">
@@ -90,8 +96,101 @@
         </div>
     </div>
 
+    <!-- Achievements Panel -->
+    <div id="achievementsPanel" class="achievements-panel hidden">
+        <h2>Accomplissements</h2>
+        <div class="achievements-progress">
+            <div class="achievements-progress-text">
+                Progression: <span id="achievementsProgressText">0/0</span>
+            </div>
+            <div class="achievements-progress-bar">
+                <div id="achievementsProgressFill" class="achievements-progress-fill" style="width: 0%"></div>
+            </div>
+        </div>
+        <div id="achievementsGrid" class="achievements-grid"></div>
+        <div class="achievements-controls">
+            <button id="closeAchievementsBtn" class="achievements-btn">Fermer</button>
+            <button id="resetAchievementsBtn" class="achievements-btn" style="background: rgba(255, 100, 100, 0.3); border-color: rgba(255, 100, 100, 0.5);">Reinitialiser</button>
+        </div>
+    </div>
+
+    <!-- Shop Panel -->
+    <div id="shopPanel" class="shop-panel hidden">
+        <h2>Magasin</h2>
+        <div class="shop-wallet">
+            <span class="shop-wallet-icon">🪙</span>
+            <span class="shop-wallet-text">Porte-monnaie:</span>
+            <span id="walletAmount" class="shop-wallet-amount">0</span>
+        </div>
+        <div class="shop-lives-counter">
+            Vies supplémentaires: <span id="extraLivesDisplay">0</span> ❤️
+        </div>
+        <div class="shop-tabs">
+            <button id="tabSkins" class="shop-tab active">Skins</button>
+            <button id="tabParticles" class="shop-tab">Particules</button>
+            <button id="tabConsumables" class="shop-tab">Consommables</button>
+        </div>
+        <div id="shopGrid" class="shop-grid"></div>
+        <div class="shop-controls">
+            <button id="closeShopBtn" class="shop-control-btn">Fermer</button>
+        </div>
+    </div>
+
+    <!-- Audio Panel -->
+    <div id="audioPanel" class="audio-panel hidden">
+        <h2>🎵 Sons Ambiants</h2>
+        <div class="audio-status">
+            <div class="audio-status-item">
+                <span class="audio-status-label">Environnement:</span>
+                <span id="ambientName" class="audio-status-value">Aucun</span>
+            </div>
+            <div class="audio-status-item">
+                <span class="audio-status-label">Intensité:</span>
+                <span id="intensityName" class="audio-status-value">Normal</span>
+            </div>
+            <div class="audio-status-item">
+                <span class="audio-status-label">Style Musical:</span>
+                <span id="musicStyleName" class="audio-status-value">Classique</span>
+            </div>
+        </div>
+        <div class="audio-controls">
+            <div class="audio-control-group">
+                <label>
+                    Volume Global
+                    <span id="volumeValue" class="audio-control-value">70%</span>
+                </label>
+                <input type="range" id="audioVolumeSlider" class="audio-slider" min="0" max="100" value="70">
+            </div>
+        </div>
+        <div class="music-style-selector">
+            <h3>🎼 Style Musical</h3>
+            <div class="music-style-buttons">
+                <button class="music-style-btn active" data-style="default">
+                    <span class="music-style-icon">🎹</span>
+                    <span class="music-style-label">Classique</span>
+                    <span class="music-style-desc">Progression d'accords traditionnelle</span>
+                </button>
+                <button class="music-style-btn" data-style="orbia">
+                    <span class="music-style-icon">🌌</span>
+                    <span class="music-style-label">Orbia</span>
+                    <span class="music-style-desc">Ambiance atmosphérique relaxante</span>
+                </button>
+            </div>
+        </div>
+        <div class="audio-buttons">
+            <button id="muteAudioBtn" class="audio-btn audio-btn-mute">🔊 Muet</button>
+            <button id="closeAudioBtn" class="audio-btn">Fermer</button>
+        </div>
+    </div>
+
     <script src="JS/skills.js"></script>
     <script src="JS/skills_ui.js"></script>
+    <script src="JS/achievements.js"></script>
+    <script src="JS/achievements_ui.js"></script>
+    <script src="JS/shop.js"></script>
+    <script src="JS/shop_ui.js"></script>
+    <script src="JS/ambient-sounds.js"></script>
+    <script src="JS/ambient-sounds_ui.js"></script>
     <script src="JS/game.js"></script>
 </body>
 </html>
