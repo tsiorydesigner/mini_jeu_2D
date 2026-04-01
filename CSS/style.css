@@ -1,0 +1,169 @@
+/* ===================================================================
+   2D Platformer Game - Stylesheet
+   Minimal, clean design with a dark theme.
+   =================================================================== */
+
+/* --- Reset & Base --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #0f0f23;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #eee;
+    overflow: hidden;
+}
+
+/* --- Game Wrapper --- */
+#game-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+#game-title {
+    font-size: 1.8em;
+    font-weight: 700;
+    color: #5dade2;
+    text-shadow: 0 0 20px rgba(93, 173, 226, 0.4);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+}
+
+/* --- Game Container --- */
+#game-container {
+    position: relative;
+    border: 3px solid #2c3e50;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow:
+        0 0 30px rgba(0, 0, 0, 0.7),
+        0 0 80px rgba(93, 173, 226, 0.1);
+}
+
+#gameCanvas {
+    display: block;
+    background-color: #87CEEB;
+}
+
+/* --- HUD (Heads-Up Display) --- */
+#hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+    pointer-events: none;
+    z-index: 10;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, transparent 100%);
+}
+
+#hud-left,
+#hud-center,
+#hud-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+#hud-center {
+    align-items: center;
+}
+
+#hud-right {
+    align-items: flex-end;
+}
+
+.hud-label {
+    font-size: 0.7em;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: #aaa;
+    text-transform: uppercase;
+}
+
+.hud-value {
+    font-size: 1.6em;
+    font-weight: 700;
+    color: #ffd700;
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+    line-height: 1;
+}
+
+/* --- Overlay (Menu / Game Over) --- */
+#overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(8, 8, 24, 0.88);
+    z-index: 20;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+}
+
+.overlay-visible {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
+#overlay-content {
+    text-align: center;
+    padding: 40px 50px;
+}
+
+#overlayTitle {
+    font-size: 2.4em;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #5dade2;
+    text-shadow: 0 2px 12px rgba(93, 173, 226, 0.5);
+}
+
+#overlayMessage {
+    font-size: 1.1em;
+    margin-bottom: 28px;
+    color: #bbb;
+}
+
+#startBtn {
+    padding: 14px 44px;
+    font-size: 1.2em;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+    letter-spacing: 1px;
+}
+
+#startBtn:hover {
+    transform: scale(1.06);
+    box-shadow: 0 6px 20px rgba(52, 152, 219, 0.6);
+}
+
+#startBtn:active {
+    transform: scale(0.97);
+}
+
+#controls-hint {
+    margin-top: 20px;
+    font-size: 0.8em;
+    color: #777;
+    line-height: 1.6;
+}

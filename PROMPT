@@ -1,0 +1,53 @@
+Create a complete 2D game using JavaScript and HTML Canvas. The game should be simple and beginner-friendly.
+
+The game type can be one of the following: platformer (like Super Mario Bros.), shooter (like Contra), puzzle (like Tetris), racing (like Hill Climb Racing), or RPG (like Pokemon Red and Blue).
+
+The game must include:
+
+* A player character with position (x, y)
+
+* Movement using keyboard controls (arrow keys)
+
+* Basic physics or movement system
+
+* Enemies or obstacles
+
+* Score system and player lives
+
+* Simple collision detection
+
+Use HTML Canvas to render the game and JavaScript for logic.
+
+Include clean and well-structured code with comments.
+
+The game should run in the browser without external dependencies.
+
+Add a simple UI showing score and lives.
+
+Make the design minimal but playable.Create a complete 2D game using JavaScript and HTML Canvas. The game should be simple and beginner-friendly.
+
+The game type can be one of the following: platformer (like Super Mario Bros.), shooter (like Contra), puzzle (like Tetris), racing (like Hill Climb Racing), or RPG (like Pokemon Red and Blue).
+
+The game must include:
+
+* A player character with position (x, y)
+
+* Movement using keyboard controls (arrow keys)
+
+* Basic physics or movement system
+
+* Enemies or obstacles
+
+* Score system and player lives
+
+* Simple collision detection
+
+Use HTML Canvas to render the game and JavaScript for logic.
+
+Include clean and well-structured code with comments.
+
+The game should run in the browser without external dependencies.
+
+Add a simple UI showing score and lives.
+
+Make the design minimal but playable.
