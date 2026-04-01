@@ -30,16 +30,43 @@
                     <span id="livesDisplay" class="hud-value">3</span>
                 </div>
             </div>
+            <div id="top-controls">
+                <button id="pauseBtn" class="game-control-btn">Pause</button>
+                <button id="resumeBtn" class="game-control-btn hidden">Reprendre</button>
+            </div>
 
             <!-- Start screen overlay -->
             <div id="overlay" class="overlay-visible">
                 <div id="overlay-content">
                     <h2 id="overlayTitle">Sky Runner</h2>
                     <p id="overlayMessage">Collect coins, stomp enemies, survive!</p>
-                    <button id="startBtn">Start Game</button>
+                    <button id="startBtn">Demarrer</button>
+                    <button id="levelSelectBtn" class="secondary-btn">Selection Niveau</button>
+                    <button id="resetProgressBtn" class="secondary-btn">Reset Progression</button>
+                    <div id="options-panel">
+                        <label>Personnage
+                            <div id="characterSelect">
+                                <button class="character-btn active" data-character="runner">Runner</button>
+                                <button class="character-btn" data-character="ninja">Ninja</button>
+                                <button class="character-btn" data-character="robot">Robot</button>
+                            </div>
+                        </label>
+                        <label>Mode libre <input type="checkbox" id="freeModeToggle"></label>
+                        <label>Difficulte
+                            <select id="difficultySelect">
+                                <option value="easy">Facile</option>
+                                <option value="normal" selected>Normal</option>
+                                <option value="hard">Difficile</option>
+                            </select>
+                        </label>
+                        <label>Volume
+                            <input type="range" id="volumeSlider" min="0" max="100" value="70">
+                        </label>
+                    </div>
+                    <div id="level-grid" class="hidden"></div>
                     <p id="controls-hint">
-                        Arrow keys to move &bull; Up / Space to jump<br>
-                        Stomp enemies from above to defeat them
+                        Fleches pour bouger • Haut/Espace sauter • Shift dash • P pause<br>
+                        Double saut, checkpoint, power-up, pieges et ennemis varies
                     </p>
                 </div>
             </div>
