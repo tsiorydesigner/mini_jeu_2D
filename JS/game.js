@@ -427,6 +427,12 @@ function tryFinishLevel() {
     }
     unlockedLevel = Math.max(unlockedLevel, currentLevel + 1);
     saveGame();
+    
+    // Gagner un niveau et débloquer des compétences
+    if (typeof onPlayerLevelUp === 'function') {
+        onPlayerLevelUp();
+    }
+    
     gameState = STATE.LEVEL_CLEAR;
     showOverlay('Niveau termine', `Niveau ${currentLevel + 1} debloque`, 'Suivant');
 }
@@ -579,6 +585,9 @@ function initGame() {
     score = 0;
     lives = difficulty === 'hard' ? 2 : 3;
     loadLevel(1);
+    
+    // Initialiser le système de compétences
+    initializeSkillsSystem();
     updateHUD();
 }
 function startGame() {

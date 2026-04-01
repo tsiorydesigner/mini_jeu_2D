@@ -1,78 +1,68 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2D Platformer Game</title>
-    <link rel="stylesheet" href="CSS/style.css">
+    <meta name="description" content="Mod Runner — plateforme 2D dans le navigateur. Collectez des pièces, évitez les pièges, choisissez votre personnage.">
+    <title>Mod Runner — Plateforme 2D</title>
+    <link rel="stylesheet" href="CSS/home.css">
 </head>
 <body>
-    <div id="game-wrapper">
-        <!-- Title -->
-        <h1 id="game-title">Mod Runner</h1>
+    <div class="home-bg" aria-hidden="true"></div>
+    <header class="home-header">
+        <span class="home-logo">Mod Runner</span>
+        <a class="home-header-cta" href="game.html">Jouer</a>
+    </header>
 
-        <!-- Game container with canvas and overlays -->
-        <div id="game-container">
-            <canvas id="gameCanvas" width="800" height="480"></canvas>
-
-            <!-- HUD overlay showing score and lives -->
-            <div id="hud">
-                <div id="hud-left">
-                    <span class="hud-label">SCORE</span>
-                    <span id="scoreDisplay" class="hud-value">0</span>
-                </div>
-                <div id="hud-center">
-                    <span class="hud-label">LEVEL</span>
-                    <span id="levelDisplay" class="hud-value">1</span>
-                </div>
-                <div id="hud-right">
-                    <span class="hud-label">LIVES</span>
-                    <span id="livesDisplay" class="hud-value">3</span>
-                </div>
+    <main class="home-main">
+        <section class="home-hero" aria-labelledby="hero-title">
+            <p class="home-kicker">Plateforme 2D dans le navigateur</p>
+            <h1 id="hero-title" class="home-title">Sky Runner</h1>
+            <p class="home-lead">
+                Sautez, double-sautez, esquivez les ennemis et les pièges. Trois personnages,
+                niveaux à débloquer et une progression à sauvegarder localement.
+            </p>
+            <div class="home-actions">
+                <a class="btn btn-primary" href="game.html">Lancer la partie</a>
+                <a class="btn btn-ghost" href="#gameplay">Découvrir</a>
             </div>
-            <div id="top-controls">
-                <button id="pauseBtn" class="game-control-btn">Pause</button>
-                <button id="resumeBtn" class="game-control-btn hidden">Reprendre</button>
-            </div>
+        </section>
 
-            <!-- Start screen overlay -->
-            <div id="overlay" class="overlay-visible">
-                <div id="overlay-content">
-                    <h2 id="overlayTitle">Sky Runner</h2>
-                    <p id="overlayMessage">Collect coins, stomp enemies, survive!</p>
-                    <button id="startBtn">Demarrer</button>
-                    <button id="levelSelectBtn" class="secondary-btn">Selection Niveau</button>
-                    <button id="resetProgressBtn" class="secondary-btn">Reset Progression</button>
-                    <div id="options-panel">
-                        <label>Personnage
-                            <div id="characterSelect">
-                                <button class="character-btn active" data-character="runner">Runner</button>
-                                <button class="character-btn" data-character="ninja">Ninja</button>
-                                <button class="character-btn" data-character="robot">Robot</button>
-                            </div>
-                        </label>
-                        <label>Mode libre <input type="checkbox" id="freeModeToggle"></label>
-                        <label>Difficulte
-                            <select id="difficultySelect">
-                                <option value="easy">Facile</option>
-                                <option value="normal" selected>Normal</option>
-                                <option value="hard">Difficile</option>
-                            </select>
-                        </label>
-                        <label>Volume
-                            <input type="range" id="volumeSlider" min="0" max="100" value="70">
-                        </label>
-                    </div>
-                    <div id="level-grid" class="hidden"></div>
-                    <p id="controls-hint">
-                        Fleches pour bouger • Haut/Espace sauter • Shift dash • P pause<br>
-                        Double saut, checkpoint, power-up, pieges et ennemis varies
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
+        <section id="gameplay" class="home-features" aria-labelledby="features-title">
+            <h2 id="features-title" class="home-section-title">Ce qui vous attend</h2>
+            <ul class="home-feature-grid">
+                <li class="home-feature">
+                    <span class="home-feature-icon" aria-hidden="true">◆</span>
+                    <h3>Contrôles</h3>
+                    <p>Flèches pour bouger, saut et double saut, dash, pause au clavier.</p>
+                </li>
+                <li class="home-feature">
+                    <span class="home-feature-icon" aria-hidden="true">◆</span>
+                    <h3>Personnages</h3>
+                    <p>Runner, Ninja ou Robot — choisissez avant de lancer.</p>
+                </li>
+                <li class="home-feature">
+                    <span class="home-feature-icon" aria-hidden="true">◆</span>
+                    <h3>Progression</h3>
+                    <p>Score, vies, niveaux et checkpoints pour aller plus loin.</p>
+                </li>
+                <li class="home-feature">
+                    <span class="home-feature-icon" aria-hidden="true">◆</span>
+                    <h3>Options</h3>
+                    <p>Difficulté, mode libre, volume — tout depuis le menu.</p>
+                </li>
+            </ul>
+        </section>
 
-    <script src="JS/game.js"></script>
+        <section class="home-cta-block" aria-labelledby="cta-title">
+            <h2 id="cta-title" class="visually-hidden">Prêt à jouer</h2>
+            <p class="home-cta-text">Aucune installation — ouvrez la page et jouez.</p>
+            <a class="btn btn-primary btn-large" href="game.html">Jouer maintenant</a>
+        </section>
+    </main>
+
+    <footer class="home-footer">
+        <p>Mod Runner — mini-jeu 2D Canvas</p>
+    </footer>
 </body>
 </html>
