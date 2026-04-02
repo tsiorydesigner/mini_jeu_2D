@@ -59,6 +59,42 @@ class AudioManager {
                 baseFreq: [50, 100],
                 modulation: 0.1,
                 description: 'Espace profond'
+            },
+            desert: {
+                ambient: 'desert_wind',
+                baseFreq: [180, 220],
+                modulation: 0.4,
+                description: 'Vent sec et chaud'
+            },
+            jungle: {
+                ambient: 'jungle_birds',
+                baseFreq: [250, 350],
+                modulation: 0.7,
+                description: 'Échos de la jungle'
+            },
+            ruins: {
+                ambient: 'echoing_stones',
+                baseFreq: [120, 180],
+                modulation: 0.15,
+                description: 'Ruines anciennes'
+            },
+            neon: {
+                ambient: 'electric_hum',
+                baseFreq: [60, 120],
+                modulation: 0.9,
+                description: 'Énergie néon'
+            },
+            night: {
+                ambient: 'crickets',
+                baseFreq: [400, 600],
+                modulation: 0.05,
+                description: 'Calme nocturne'
+            },
+            steam: {
+                ambient: 'industrial_hiss',
+                baseFreq: [100, 300],
+                modulation: 0.6,
+                description: 'Vapeur et pistons'
             }
         };
         

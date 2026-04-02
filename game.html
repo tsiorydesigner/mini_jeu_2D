@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="CSS/shop.css">
     <link rel="stylesheet" href="CSS/controls.css">
     <link rel="stylesheet" href="CSS/stats.css">
+    <link rel="stylesheet" href="CSS/settings.css">
+    <link rel="icon" type="image/png" href="../mini_jeu_2D/img/favicon.ico" sizes="96x96" />
 </head>
 <body>
     <div id="game-wrapper">
@@ -28,6 +30,10 @@
                 <div id="hud-left">
                     <span class="hud-label">SCORE</span>
                     <span id="scoreDisplay" class="hud-value">0</span>
+                    <div id="comboDisplay" class="combo-display hidden">
+                        <span id="comboCount">0</span>
+                        <span id="comboLabel">COMBO</span>
+                    </div>
                 </div>
                 <div id="hud-center">
                     <span class="hud-label">LEVEL</span>
@@ -67,6 +73,23 @@
                                 <button class="character-btn" data-character="mage">Mage</button>
                             </div>
                         </label>
+                        
+                        <div class="settings-divider">Graphismes</div>
+                        <label>Particules <input type="checkbox" id="setting-particles"></label>
+                        <label>Mode Rétro <input type="checkbox" id="setting-retro"></label>
+                        <div class="settings-group">
+                            <label for="setting-retro-blur">Intensité Flou</label>
+                            <input type="range" id="setting-retro-blur" min="0" max="2" step="0.1" value="0.5">
+                        </div>
+                        <label>FPS Max
+                            <select id="setting-fps">
+                                <option value="30">30</option>
+                                <option value="60" selected>60</option>
+                                <option value="120">120</option>
+                            </select>
+                        </label>
+
+                        <div class="settings-divider">Audio & Jeu</div>
                         <label>Mode libre <input type="checkbox" id="freeModeToggle"></label>
                         <label>Difficulte
                             <select id="difficultySelect">
@@ -171,6 +194,7 @@
 
     <audio id="bgMusic" loop preload="auto" src="song/Orbia song 2.mp3"></audio>
 
+    <script src="JS/settings.js"></script>
     <script src="JS/controls.js"></script>
     <script src="JS/skills.js"></script>
     <script src="JS/skills_ui.js"></script>

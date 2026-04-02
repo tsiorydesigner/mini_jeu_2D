@@ -1,0 +1,89 @@
+/* Effets pour le mode Rétro */
+.retro-mode {
+    image-rendering: pixelated; /* Désactive l'anti-aliasing du navigateur */
+    filter: contrast(1.1) brightness(1.1) saturate(1.2) blur(var(--retro-blur, 0px));
+    position: relative;
+}
+
+/* Effet de lignes de balayage (scanlines) optionnel */
+.retro-mode::after {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%, 
+        rgba(0, 0, 0, 0.1) 50%
+    );
+    background-size: 100% 4px;
+    z-index: 10;
+    pointer-events: none;
+    opacity: 0.3;
+}
+
+.settings-divider {
+    margin: 15px 0 10px 0;
+    padding-bottom: 5px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 0.8em;
+    color: #64c8ff;
+    text-transform: uppercase;
+}
+
+/* Groupes d'options dans l'UI */
+.settings-menu {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 12px;
+    text-align: left;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.settings-menu h3 {
+    margin: 0 0 15px 0;
+    font-size: 1.1em;
+    color: #64c8ff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.settings-group {
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #fff;
+}
+
+.settings-group label {
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+.settings-group input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.settings-group select {
+    background: #2c3e50;
+    color: white;
+    border: 1px solid #444;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    outline: none;
+}
+
+.settings-group input[type="range"] {
+    width: 80px;
+    height: 6px;
+    cursor: pointer;
+    accent-color: #64c8ff;
+    margin-left: 10px;
+}

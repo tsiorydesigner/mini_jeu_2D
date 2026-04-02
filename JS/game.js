@@ -45,6 +45,41 @@ let levelStartMs = 0;
 let currentTheme = null;
 let checkpoint = null;
 
+// --- Combo System ---
+let comboCount = 0;
+let comboMultiplier = 1;
+let comboTimer = 0;
+const COMBO_TIME_WINDOW = 1500;
+const comboDisplay = document.getElementById('comboDisplay');
+const comboCountEl = document.getElementById('comboCount');
+
+function updateCombo() {
+    if (comboTimer > 0) {
+        comboTimer -= 16;
+        if (comboTimer <= 0) {
+            comboCount = 0;
+            comboMultiplier = 1;
+            if (comboDisplay) comboDisplay.classList.add('hidden');
+        }
+    }
+}
+
+function addCombo(points) {
+    comboCount++;
+    comboTimer = COMBO_TIME_WINDOW;
+    comboMultiplier = Math.min(Math.floor(comboCount / 3) + 1, 5);
+    const bonusPoints = points * comboMultiplier;
+    score += bonusPoints - points;
+    if (comboDisplay) {
+        comboCountEl.textContent = `${comboCount}x`;
+        comboDisplay.classList.remove('hidden');
+        comboDisplay.style.animation = 'none';
+        comboDisplay.offsetHeight;
+        comboDisplay.style.animation = 'comboPulse 0.3s ease-out';
+    }
+    updateHUD();
+}
+
 // --- Stats Tracking ---
 const STATS_SAVE_KEY = 'mod_runner_stats_v1';
 const stats = {
@@ -380,6 +415,7 @@ function loadLevel(level) {
 }
 
 function addParticle(x, y, color, n = 10) {
+    if (window.settingsManager && !window.settingsManager.settings.particlesEnabled) return;
     // Utiliser les particules équipées du magasin
     let particleColors = [color];
     if (typeof shopManager !== 'undefined' && shopManager.equipped.particle !== 'default') {
@@ -396,6 +432,12 @@ function addParticle(x, y, color, n = 10) {
 }
 function loseLife() {
     if (player.invincible > 0) return;
+    
+    comboCount = 0;
+    comboMultiplier = 1;
+    comboTimer = 0;
+    if (comboDisplay) comboDisplay.classList.add('hidden');
+    
     if (player.powerShield > 0) { player.powerShield--; player.invincible = 40; return; }
     
     // Utiliser une vie supplémentaire du magasin si disponible
@@ -532,7 +574,7 @@ function updateEnemies() {
             if (player.vy > 0 && prevBottom <= e.y + 10) {
                 e.alive = false;
                 player.vy = -6;
-                score += 120;
+                addCombo(120);
                 if (stats.jumpWasInAir) { statsTrackSuccessfulJump(); stats.jumpWasInAir = false; }
                 addParticle(e.x + 10, e.y + 10, '#ff7b7b', 14);
                 beep(620, 0.04);
@@ -577,7 +619,7 @@ function updateInteractions() {
     for (const c of coins) {
         if (c.collected || !overlap(player, c)) continue;
         c.collected = true;
-        score += 50;
+        addCombo(50);
         addParticle(c.x + 7, c.y + 7, currentTheme.coin, 8);
         beep(800, 0.03);
         voiceNarrator.playCoinComment();
@@ -598,7 +640,7 @@ function updateInteractions() {
     for (const s of spikes) if (overlap(player, s)) loseLife();
     for (const p of powerups) {
         if (p.taken || !overlap(player, p)) continue;
-        p.taken = true; player.powerShield = 1; player.hasDash = true; score += 100;
+        p.taken = true; player.powerShield = 1; player.hasDash = true; addCombo(100);
         addParticle(p.x, p.y, '#6df0ff', 12);
         updateHUD();
         voiceNarrator.playPowerupComment();
@@ -817,8 +859,21 @@ function showOverlay(title, message, btnText) {
     overlayMessage.textContent = message;
     startBtn.textContent = btnText;
     overlay.classList.add('overlay-visible');
+
+    // Afficher le menu des réglages seulement en pause ou au menu
+    const settingsMenu = document.getElementById('settings-menu');
+    if (settingsMenu) {
+        if (gameState === STATE.PAUSED || gameState === STATE.MENU) {
+            settingsMenu.classList.remove('hidden');
+            if (window.settingsManager) window.settingsManager.updateUI();
+        } else {
+            settingsMenu.classList.add('hidden');
+        }
+    }
 }
-function hideOverlay() { overlay.classList.remove('overlay-visible'); }
+function hideOverlay() { 
+    overlay.classList.remove('overlay-visible'); 
+}
 
 function updatePauseButtons() {
     if (gameState === STATE.PLAYING) {
@@ -836,6 +891,11 @@ function updatePauseButtons() {
 function initGame() {
     score = 0;
     lives = difficulty === 'hard' ? 2 : 3;
+    comboCount = 0;
+    comboMultiplier = 1;
+    comboTimer = 0;
+    if (comboDisplay) comboDisplay.classList.add('hidden');
+    
     // Appliquer les traits du personnage choisi avant de démarrer
     applyCharacterTraits();
     lives += player.extraLifeOnStart || 0;
@@ -868,8 +928,20 @@ function togglePause() {
     updatePauseButtons();
 }
 
-function gameLoop() {
+let lastTime = 0;
+function gameLoop(timestamp) {
+    const fpsCap = window.settingsManager ? window.settingsManager.settings.fpsCap : 60;
+    const interval = 1000 / fpsCap;
+    const elapsed = timestamp - lastTime;
+
+    if (elapsed < interval) {
+        requestAnimationFrame(gameLoop);
+        return;
+    }
+
+    lastTime = timestamp - (elapsed % interval);
     frame++;
+
     if (gameState === STATE.PLAYING) {
         updatePlayer();
         updateEnemies();
@@ -878,6 +950,7 @@ function gameLoop() {
         tryFinishLevel();
         updateParticles();
         updateCamera();
+        updateCombo();
     } else updateParticles();
 
     if (currentTheme) drawBackground();
