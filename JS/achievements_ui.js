@@ -10,22 +10,22 @@ class AchievementsUI {
         this.progressText = document.getElementById('achievementsProgressText');
         this.progressFill = document.getElementById('achievementsProgressFill');
         
-        this.initEventListeners();
+        if (this.achievementsBtn) this.initEventListeners();
     }
 
     initEventListeners() {
         // Bouton pour ouvrir le panneau
-        this.achievementsBtn.addEventListener('click', () => {
+        if (this.achievementsBtn) this.achievementsBtn.addEventListener('click', () => {
             this.showAchievementsPanel();
         });
 
         // Bouton pour fermer
-        this.closeAchievementsBtn.addEventListener('click', () => {
+        if (this.closeAchievementsBtn) this.closeAchievementsBtn.addEventListener('click', () => {
             this.hideAchievementsPanel();
         });
 
         // Bouton pour réinitialiser
-        this.resetAchievementsBtn.addEventListener('click', () => {
+        if (this.resetAchievementsBtn) this.resetAchievementsBtn.addEventListener('click', () => {
             if (confirm('Êtes-vous sûr de vouloir réinitialiser tous les accomplissements ?')) {
                 achievementManager.reset();
                 this.renderAchievements();
@@ -35,9 +35,9 @@ class AchievementsUI {
         // Touche A pour ouvrir/fermer
         document.addEventListener('keydown', (e) => {
             if (e.key === 'a' || e.key === 'A') {
-                if (this.achievementsPanel.classList.contains('hidden')) {
+                if (this.achievementsPanel && this.achievementsPanel.classList.contains('hidden')) {
                     this.showAchievementsPanel();
-                } else {
+                } else if (this.achievementsPanel) {
                     this.hideAchievementsPanel();
                 }
             }
@@ -45,11 +45,13 @@ class AchievementsUI {
     }
 
     showAchievementsPanel() {
+        if (!this.achievementsPanel) return;
         this.achievementsPanel.classList.remove('hidden');
         this.renderAchievements();
     }
 
     hideAchievementsPanel() {
+        if (!this.achievementsPanel) return;
         this.achievementsPanel.classList.add('hidden');
     }
 

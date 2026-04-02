@@ -7,27 +7,27 @@ class SkillsUI {
         this.skillGrid = document.getElementById('skillGrid');
         this.skillPointsDisplay = document.getElementById('skillPointsDisplay');
         
-        this.initEventListeners();
+        if (this.skillsBtn) this.initEventListeners();
         this.updateSkillPointsDisplay();
     }
 
     initEventListeners() {
         // Bouton pour ouvrir le panneau des compétences
-        this.skillsBtn.addEventListener('click', () => {
+        if (this.skillsBtn) this.skillsBtn.addEventListener('click', () => {
             this.showSkillsPanel();
         });
 
         // Bouton pour fermer le panneau
-        this.closeSkillsBtn.addEventListener('click', () => {
+        if (this.closeSkillsBtn) this.closeSkillsBtn.addEventListener('click', () => {
             this.hideSkillsPanel();
         });
 
         // Touche S pour ouvrir les compétences
         document.addEventListener('keydown', (e) => {
             if (e.key === 's' || e.key === 'S') {
-                if (this.skillsPanel.classList.contains('hidden')) {
+                if (this.skillsPanel && this.skillsPanel.classList.contains('hidden')) {
                     this.showSkillsPanel();
-                } else {
+                } else if (this.skillsPanel) {
                     this.hideSkillsPanel();
                 }
             }
@@ -35,12 +35,14 @@ class SkillsUI {
     }
 
     showSkillsPanel() {
+        if (!this.skillsPanel) return;
         this.skillsPanel.classList.remove('hidden');
         this.renderSkills();
         this.updateSkillPointsDisplay();
     }
 
     hideSkillsPanel() {
+        if (!this.skillsPanel) return;
         this.skillsPanel.classList.add('hidden');
     }
 
@@ -120,7 +122,7 @@ class SkillsUI {
     }
 
     updateSkillPointsDisplay() {
-        this.skillPointsDisplay.textContent = skillSystem.skillPoints;
+        if (this.skillPointsDisplay) this.skillPointsDisplay.textContent = skillSystem.skillPoints;
     }
 
     // Appelé quand le joueur gagne un niveau

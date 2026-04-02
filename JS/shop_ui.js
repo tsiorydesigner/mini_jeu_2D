@@ -16,31 +16,31 @@ class ShopUI {
             consumable: document.getElementById('tabConsumables')
         };
         
-        this.initEventListeners();
+        if (this.shopBtn) this.initEventListeners();
     }
 
     initEventListeners() {
         // Bouton pour ouvrir le magasin
-        this.shopBtn.addEventListener('click', () => {
+        if (this.shopBtn) this.shopBtn.addEventListener('click', () => {
             this.showShopPanel();
         });
 
         // Bouton pour fermer
-        this.closeShopBtn.addEventListener('click', () => {
+        if (this.closeShopBtn) this.closeShopBtn.addEventListener('click', () => {
             this.hideShopPanel();
         });
 
         // Onglets
-        this.tabs.skin.addEventListener('click', () => this.switchCategory('skin'));
-        this.tabs.particle.addEventListener('click', () => this.switchCategory('particle'));
-        this.tabs.consumable.addEventListener('click', () => this.switchCategory('consumable'));
+        if (this.tabs.skin) this.tabs.skin.addEventListener('click', () => this.switchCategory('skin'));
+        if (this.tabs.particle) this.tabs.particle.addEventListener('click', () => this.switchCategory('particle'));
+        if (this.tabs.consumable) this.tabs.consumable.addEventListener('click', () => this.switchCategory('consumable'));
 
         // Touche M pour ouvrir/fermer le magasin
         document.addEventListener('keydown', (e) => {
             if (e.key === 'm' || e.key === 'M') {
-                if (this.shopPanel.classList.contains('hidden')) {
+                if (this.shopPanel && this.shopPanel.classList.contains('hidden')) {
                     this.showShopPanel();
-                } else {
+                } else if (this.shopPanel) {
                     this.hideShopPanel();
                 }
             }
@@ -48,6 +48,7 @@ class ShopUI {
     }
 
     showShopPanel() {
+        if (!this.shopPanel) return;
         this.shopPanel.classList.remove('hidden');
         this.updateWallet();
         this.updateExtraLives();
@@ -55,6 +56,7 @@ class ShopUI {
     }
 
     hideShopPanel() {
+        if (!this.shopPanel) return;
         this.shopPanel.classList.add('hidden');
     }
 
@@ -63,7 +65,7 @@ class ShopUI {
         
         // Mettre à jour les onglets actifs
         Object.keys(this.tabs).forEach(key => {
-            this.tabs[key].classList.toggle('active', key === category);
+            if (this.tabs[key]) this.tabs[key].classList.toggle('active', key === category);
         });
         
         this.renderItems();

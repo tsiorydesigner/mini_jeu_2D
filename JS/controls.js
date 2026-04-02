@@ -109,18 +109,28 @@ class InputManager {
         });
     }
 
+    isActionActive(action) {
+        if (action === 'moveLeft') return this.keys.left;
+        if (action === 'moveRight') return this.keys.right;
+        if (action === 'jump') return this.keys.jump;
+        if (action === 'dash') return this.keys.dash;
+        if (action === 'pause') return this.keys.pause;
+        return false;
+    }
+
     // À appeler dans la boucle principale du jeu (game.js)
     update() {
         const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
         const gp = gamepads[0]; // On prend la première manette détectée
         if (gp) {
-            this.keys.left = gp.axes[0] < -0.3 || gp.buttons[14].pressed;
-            this.keys.right = gp.axes[0] > 0.3 || gp.buttons[15].pressed;
-            this.keys.jump = gp.buttons[0].pressed || gp.buttons[1].pressed; // A ou B
-            this.keys.dash = gp.buttons[2].pressed; // X
-            this.keys.pause = gp.buttons[9].pressed; // Start
+            this.keys.left = gp.axes[0] < -0.3 || (gp.buttons[14] && gp.buttons[14].pressed);
+            this.keys.right = gp.axes[0] > 0.3 || (gp.buttons[15] && gp.buttons[15].pressed);
+            this.keys.jump = (gp.buttons[0] && gp.buttons[0].pressed) || (gp.buttons[1] && gp.buttons[1].pressed); // A ou B
+            this.keys.dash = gp.buttons[2] && gp.buttons[2].pressed; // X
+            this.keys.pause = gp.buttons[9] && gp.buttons[9].pressed; // Start
         }
     }
 }
 
 const input = new InputManager();
+window.controlsManager = input;

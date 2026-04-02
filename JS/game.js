@@ -303,7 +303,8 @@ function loseLife() {
     
     lives--;
     updateHUD();
-    T2ddParticle(player.x + 10, player.y + 10, '#ff5555', 18);"a²  B "  voiceNarrator.playDamageTaken();
+    addParticle(player.x + 10, player.y + 10, '#ff5555', 18);
+    voiceNarrator.playDamageTaken();
     
     // Notifier le système d'accomplissements des dégâts
     if (typeof achievementManager !== 'undefined') {
@@ -874,23 +875,7 @@ function resizeCanvas() {
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
-// Touch controls for mobile/Android
-const touchLeft = document.getElementById('touchLeft');
-const touchRight = document.getElementById('touchRight');
-const touchJump = document.getElementById('touchJump');
-const touchDash = document.getElementById('touchDash');
-
-function addTouchBtn(el, key) {
-    if (!el) return;
-    el.addEventListener('touchstart', (e) => { e.preventDefault(); keys[key] = true; }, { passive: false });
-    el.addEventListener('touchend', (e) => { e.preventDefault(); keys[key] = false; }, { passive: false });
-    el.addEventListener('touchcancel', () => { keys[key] = false; });
-}
-
-addTouchBtn(touchLeft, 'ArrowLeft');
-addTouchBtn(touchRight, 'ArrowRight');
-addTouchBtn(touchJump, 'ArrowUp');
-addTouchBtn(touchDash, 'Shift');
+// Touch controls are handled by InputManager in controls.js
 
 // Volume control
 const volumeSlider = document.getElementById('volumeSlider');
