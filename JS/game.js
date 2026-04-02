@@ -303,7 +303,7 @@ function loseLife() {
     
     lives--;
     updateHUD();
-    addParticle(player.x + 10, player.y + 10, '#ff5555', 18);
+    T2ddParticle(player.x + 10, player.y + 10, '#ff5555', 18);"a²  B "  voiceNarrator.playDamageTaken();
     
     // Notifier le système d'accomplissements des dégâts
     if (typeof achievementManager !== 'undefined') {
@@ -312,6 +312,7 @@ function loseLife() {
     
     if (lives <= 0) { 
         gameState = STATE.GAME_OVER; 
+        voiceNarrator.playGameOver();
         stopThemeMusic(); 
         showOverlay('Game Over', `Score: ${score}`, 'Rejouer'); 
         return; 
@@ -419,6 +420,7 @@ function updateEnemies() {
                 addParticle(e.x + 10, e.y + 10, '#ff7b7b', 14);
                 beep(620, 0.04);
                 updateHUD();
+                voiceNarrator.playEnemyKilled();
                 
                 // Accomplissement: ennemi tué
                 if (typeof achievementManager !== 'undefined') {
@@ -461,6 +463,7 @@ function updateInteractions() {
         score += 50;
         addParticle(c.x + 7, c.y + 7, currentTheme.coin, 8);
         beep(800, 0.03);
+        voiceNarrator.playCoinComment();
         updateHUD();
         
         // Accomplissement: pièce collectée
@@ -480,6 +483,7 @@ function updateInteractions() {
         p.taken = true; player.powerShield = 1; player.hasDash = true; score += 100;
         addParticle(p.x, p.y, '#6df0ff', 12);
         updateHUD();
+        voiceNarrator.playPowerupComment();
     }
     for (const k of checkpoints) {
         if (!overlap(player, k)) continue;
@@ -508,6 +512,7 @@ function tryFinishLevel() {
         saveGame();
         stopThemeMusic();
         showOverlay('Victoire', `Score final ${score} | Boss vaincu`, 'Rejouer');
+        voiceNarrator.playWin();
         return;
     }
     unlockedLevel = Math.max(unlockedLevel, currentLevel + 1);
@@ -524,6 +529,7 @@ function tryFinishLevel() {
     }
     
     gameState = STATE.LEVEL_CLEAR;
+    voiceNarrator.playLevelComplete();
     showOverlay('Niveau termine', `Niveau ${currentLevel + 1} debloque`, 'Suivant');
 }
 
@@ -715,6 +721,7 @@ function initGame() {
     lives += player.extraLifeOnStart || 0;
     loadLevel(1);
     
+    voiceNarrator.init(); // Initialize voice narrator
     // Initialiser le système de compétences
     initializeSkillsSystem();
     updateHUD();
