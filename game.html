@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="CSS/achievements.css">
     <link rel="stylesheet" href="CSS/shop.css">
     <link rel="stylesheet" href="CSS/controls.css">
+    <link rel="stylesheet" href="CSS/stats.css">
 </head>
 <body>
     <div id="game-wrapper">
@@ -37,6 +38,9 @@
                     <span id="livesDisplay" class="hud-value">3</span>
                 </div>
             </div>
+            <div id="top-left-controls">
+                <button id="statsBtn" class="game-control-btn">Stats</button>
+            </div>
             <div id="top-controls">
                 <button id="pauseBtn" class="game-control-btn">Pause</button>
                 <button id="resumeBtn" class="game-control-btn hidden">Reprendre</button>
@@ -60,6 +64,7 @@
                                 <button class="character-btn active" data-character="runner">Runner</button>
                                 <button class="character-btn" data-character="ninja">Ninja</button>
                                 <button class="character-btn" data-character="robot">Robot</button>
+                                <button class="character-btn" data-character="mage">Mage</button>
                             </div>
                         </label>
                         <label>Mode libre <input type="checkbox" id="freeModeToggle"></label>

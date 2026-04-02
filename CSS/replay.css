@@ -1,0 +1,304 @@
+/* Replay System Styles */
+
+/* Replay button on overlay */
+#replayBtn {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    border: none;
+    color: #fff;
+    padding: 8px 14px;
+    font-size: 0.85em;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 220px;
+    margin: 5px auto;
+    display: block;
+    transition: transform 0.15s;
+}
+#replayBtn:hover {
+    transform: scale(1.04);
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+}
+
+/* Replay Panel */
+#replayPanel {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(8, 8, 24, 0.92);
+    z-index: 25;
+}
+
+#replayPanelContent {
+    text-align: center;
+    padding: 20px;
+    max-width: 90vw;
+    max-height: 85vh;
+    overflow-y: auto;
+    width: 500px;
+}
+
+#replayPanelContent h3 {
+    font-size: 1.4em;
+    color: #e74c3c;
+    margin-bottom: 12px;
+    text-shadow: 0 2px 10px rgba(231, 76, 60, 0.4);
+}
+
+#recordBtn {
+    padding: 10px 24px;
+    font-size: 1em;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 16px;
+    transition: all 0.2s;
+}
+#recordBtn:hover {
+    transform: scale(1.04);
+    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.5);
+}
+#recordBtn.recording {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    animation: pulse-record 1s infinite;
+}
+
+@keyframes pulse-record {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0.5); }
+    50% { box-shadow: 0 0 0 10px rgba(243, 156, 18, 0); }
+}
+
+#replayList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.replay-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(19, 52, 83, 0.7);
+    border: 1px solid rgba(120, 170, 255, 0.2);
+    border-radius: 8px;
+    padding: 10px 14px;
+    text-align: left;
+}
+
+.replay-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 0.8em;
+    color: #bbb;
+}
+
+.replay-level {
+    color: #5dade2;
+    font-weight: 700;
+}
+
+.replay-score {
+    color: #ffd700;
+}
+
+.replay-duration {
+    color: #88d8b0;
+}
+
+.replay-date {
+    color: #888;
+    font-size: 0.85em;
+}
+
+.replay-char {
+    color: #c39bd3;
+    text-transform: capitalize;
+}
+
+.replay-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.replay-play-btn {
+    padding: 4px 12px;
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 0.8em;
+    font-weight: 600;
+    cursor: pointer;
+}
+.replay-play-btn:hover {
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+    transform: scale(1.05);
+}
+
+.replay-delete-btn {
+    padding: 4px 8px;
+    background: rgba(231, 76, 60, 0.3);
+    border: 1px solid rgba(231, 76, 60, 0.5);
+    border-radius: 6px;
+    color: #e74c3c;
+    font-size: 0.8em;
+    font-weight: 600;
+    cursor: pointer;
+}
+.replay-delete-btn:hover {
+    background: rgba(231, 76, 60, 0.5);
+}
+
+/* Replay Controls (during playback) */
+#replayControls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 30;
+    background: rgba(0, 0, 0, 0.85);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#replayControls .hidden {
+    display: none !important;
+}
+
+#replayControls button {
+    padding: 6px 14px;
+    background: rgba(52, 152, 219, 0.3);
+    border: 1px solid rgba(120, 170, 255, 0.4);
+    border-radius: 6px;
+    color: #dce9ff;
+    font-size: 0.8em;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+}
+#replayControls button:hover {
+    background: rgba(52, 152, 219, 0.5);
+}
+
+#replayTimeline {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    background: rgba(19, 52, 83, 0.8);
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+}
+#replayTimeline::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    background: #e74c3c;
+    border-radius: 50%;
+    cursor: pointer;
+}
+#replayTimeline::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    background: #e74c3c;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+}
+
+#replayTimeDisplay {
+    font-size: 0.75em;
+    color: #888;
+    min-width: 70px;
+    text-align: center;
+}
+
+/* Replay badge on HUD */
+#replayBadge {
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(231, 76, 60, 0.85);
+    color: #fff;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 0.75em;
+    font-weight: 700;
+    z-index: 16;
+    pointer-events: none;
+    letter-spacing: 1px;
+}
+
+/* Recording indicator */
+#recordingIndicator {
+    position: absolute;
+    top: 12px;
+    left: 14px;
+    z-index: 16;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(231, 76, 60, 0.8);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75em;
+    font-weight: 700;
+    color: #fff;
+    pointer-events: none;
+}
+
+#recordingIndicator .rec-dot {
+    width: 8px;
+    height: 8px;
+    background: #fff;
+    border-radius: 50%;
+    animation: blink-rec 1s infinite;
+}
+
+@keyframes blink-rec {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+    #replayPanelContent {
+        width: 95vw;
+        padding: 12px;
+    }
+    #replayPanelContent h3 {
+        font-size: 1.1em;
+    }
+    .replay-card {
+        flex-direction: column;
+        gap: 6px;
+        padding: 8px 10px;
+    }
+    .replay-info {
+        font-size: 0.7em;
+    }
+    #replayControls {
+        padding: 6px 8px;
+        gap: 4px;
+    }
+    #replayControls button {
+        font-size: 0.7em;
+        padding: 4px 8px;
+    }
+    #recordBtn {
+        font-size: 0.85em;
+        padding: 8px 18px;
+    }
+}

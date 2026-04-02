@@ -56,3 +56,4 @@ QR code pour mobile
 Niveau généré aléatoirement chaque jour
 Même seed pour tous les joueurs
 Classement du jour
+14. 

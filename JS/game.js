@@ -45,6 +45,20 @@ let levelStartMs = 0;
 let currentTheme = null;
 let checkpoint = null;
 
+// --- Stats Tracking ---
+const STATS_SAVE_KEY = 'mod_runner_stats_v1';
+const stats = {
+    totalPlayTimeMs: 0,
+    sessionStartMs: 0,
+    deathsPerLevel: {},
+    totalJumps: 0,
+    successfulJumps: 0,
+    jumpWasInAir: false,
+    coinsPerLevel: {},
+    totalCoinsPerLevel: {},
+};
+let statsSessionActive = false;
+
 const player = {
     x: TILE, y: TILE, w: 28, h: 36, vx: 0, vy: 0, onGround: false, facingRight: true, invincible: 0,
     jumpsLeft: 2, hasDash: true, dashCd: 0, powerShield: 0, coyote: 0, jumpBuffer: 0,
@@ -150,6 +164,89 @@ function loadSave() {
     }
 }
 
+function saveStats() {
+    const data = {
+        totalPlayTimeMs: stats.totalPlayTimeMs,
+        deathsPerLevel: stats.deathsPerLevel,
+        totalJumps: stats.totalJumps,
+        successfulJumps: stats.successfulJumps,
+        coinsPerLevel: stats.coinsPerLevel,
+        totalCoinsPerLevel: stats.totalCoinsPerLevel,
+    };
+    localStorage.setItem(STATS_SAVE_KEY, JSON.stringify(data));
+}
+function loadStats() {
+    const raw = localStorage.getItem(STATS_SAVE_KEY);
+    if (!raw) return;
+    try {
+        const data = JSON.parse(raw);
+        stats.totalPlayTimeMs = data.totalPlayTimeMs || 0;
+        stats.deathsPerLevel = data.deathsPerLevel || {};
+        stats.totalJumps = data.totalJumps || 0;
+        stats.successfulJumps = data.successfulJumps || 0;
+        stats.coinsPerLevel = data.coinsPerLevel || {};
+        stats.totalCoinsPerLevel = data.totalCoinsPerLevel || {};
+    } catch { /* ignore */ }
+}
+function statsStartSession() {
+    stats.sessionStartMs = performance.now();
+    statsSessionActive = true;
+}
+function statsEndSession() {
+    if (statsSessionActive) {
+        stats.totalPlayTimeMs += performance.now() - stats.sessionStartMs;
+        statsSessionActive = false;
+        saveStats();
+    }
+}
+function statsTrackJump() {
+    stats.totalJumps++;
+}
+function statsTrackSuccessfulJump() {
+    stats.successfulJumps++;
+}
+function statsTrackDeath(level) {
+    stats.deathsPerLevel[level] = (stats.deathsPerLevel[level] || 0) + 1;
+}
+function statsTrackCoin(level) {
+    stats.coinsPerLevel[level] = (stats.coinsPerLevel[level] || 0) + 1;
+}
+function statsSetTotalCoins(level, total) {
+    stats.totalCoinsPerLevel[level] = total;
+}
+function getStatsDisplay() {
+    const totalMs = stats.totalPlayTimeMs + (statsSessionActive ? performance.now() - stats.sessionStartMs : 0);
+    const totalSec = Math.floor(totalMs / 1000);
+    const hours = Math.floor(totalSec / 3600);
+    const minutes = Math.floor((totalSec % 3600) / 60);
+    const seconds = totalSec % 60;
+    const timeStr = hours > 0 ? `${hours}h ${minutes}m ${seconds}s` : minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
+    const jumpAccuracy = stats.totalJumps > 0 ? Math.round((stats.successfulJumps / stats.totalJumps) * 100) : 0;
+    let totalCollected = 0, totalAvailable = 0;
+    for (const lvl in stats.totalCoinsPerLevel) {
+        totalAvailable += stats.totalCoinsPerLevel[lvl];
+        totalCollected += stats.coinsPerLevel[lvl] || 0;
+    }
+    let deathsHtml = '';
+    const sortedLevels = Object.keys(stats.deathsPerLevel).sort((a, b) => Number(a) - Number(b));
+    for (const lvl of sortedLevels) {
+        deathsHtml += `<div class="stats-row"><span>Niveau ${lvl}</span><span class="stats-val">${stats.deathsPerLevel[lvl]}</span></div>`;
+    }
+    if (!deathsHtml) deathsHtml = '<div class="stats-row"><span>Aucune mort enregistree</span></div>';
+    let coinsHtml = '';
+    const sortedCoinLevels = Object.keys(stats.totalCoinsPerLevel).sort((a, b) => Number(a) - Number(b));
+    for (const lvl of sortedCoinLevels) {
+        const collected = stats.coinsPerLevel[lvl] || 0;
+        const total = stats.totalCoinsPerLevel[lvl];
+        coinsHtml += `<div class="stats-row"><span>Niveau ${lvl}</span><span class="stats-val">${collected} / ${total}</span></div>`;
+    }
+    if (!coinsHtml) coinsHtml = '<div class="stats-row"><span>Aucune piece enregistree</span></div>';
+    return {
+        timeStr, jumpAccuracy, totalJumps: stats.totalJumps, successfulJumps: stats.successfulJumps,
+        totalCollected, totalAvailable, deathsHtml, coinsHtml
+    };
+}
+
 function applyCharacterTraits() {
     // Définit des modificateurs de joueur selon `selectedCharacter`
     // Valeurs par défaut
@@ -179,6 +276,13 @@ function applyCharacterTraits() {
         player.hasDash = false;
         player.dashPower = 0;
         player.extraLifeOnStart = 1;
+    } else if (selectedCharacter === 'mage') {
+        player.accelMult = 0.85; // Plus lent
+        player.jumpMult = 0.9; // Saut plus faible
+        player.maxJumps = 2;
+        player.hasDash = false; // Pas de dash
+        player.dashPower = 0;
+        player.hasProjectile = true; // Nouvelle capacité : projectile
     }
 }
 
@@ -249,6 +353,8 @@ function loadLevel(level) {
     currentLevel = level;
     currentTheme = themes[level - 1];
     parseLevel(levelMapFor(level));
+    statsSetTotalCoins(level, coins.length);
+    stats.jumpWasInAir = false;
     
     // Ajouter les vies supplémentaires du magasin
     if (typeof shopManager !== 'undefined') {
@@ -305,6 +411,7 @@ function loseLife() {
     updateHUD();
     addParticle(player.x + 10, player.y + 10, '#ff5555', 18);
     voiceNarrator.playDamageTaken();
+    statsTrackDeath(currentLevel);
     
     // Notifier le système d'accomplissements des dégâts
     if (typeof achievementManager !== 'undefined') {
@@ -314,7 +421,8 @@ function loseLife() {
     if (lives <= 0) { 
         gameState = STATE.GAME_OVER; 
         voiceNarrator.playGameOver();
-        stopThemeMusic(); 
+        stopThemeMusic();
+        statsEndSession();
         showOverlay('Game Over', `Score: ${score}`, 'Rejouer'); 
         return; 
     }
@@ -354,6 +462,8 @@ function updatePlayer() {
         if (player.coyote <= 0) player.jumpsLeft--;
         player.onGround = false;
         player.jumpBuffer = 0;
+        stats.jumpWasInAir = true;
+        statsTrackJump();
         beep(520, 0.05);
     }
     
@@ -382,7 +492,10 @@ function updatePlayer() {
     player.onGround = false;
     for (const p of platforms) {
         if (!overlap(player, p)) continue;
-        if (player.vy > 0) { player.y = p.y - player.h; player.vy = 0; player.onGround = true; player.jumpsLeft = 1; }
+        if (player.vy > 0) {
+            player.y = p.y - player.h; player.vy = 0; player.onGround = true; player.jumpsLeft = 1;
+            if (stats.jumpWasInAir) { statsTrackSuccessfulJump(); stats.jumpWasInAir = false; }
+        }
         else if (player.vy < 0) { player.y = p.y + p.h; player.vy = 0; }
     }
     if (player.y > LEVEL_H + 80) loseLife();
@@ -418,6 +531,7 @@ function updateEnemies() {
                 e.alive = false;
                 player.vy = -6;
                 score += 120;
+                if (stats.jumpWasInAir) { statsTrackSuccessfulJump(); stats.jumpWasInAir = false; }
                 addParticle(e.x + 10, e.y + 10, '#ff7b7b', 14);
                 beep(620, 0.04);
                 updateHUD();
@@ -465,6 +579,7 @@ function updateInteractions() {
         addParticle(c.x + 7, c.y + 7, currentTheme.coin, 8);
         beep(800, 0.03);
         voiceNarrator.playCoinComment();
+        statsTrackCoin(currentLevel);
         updateHUD();
         
         // Accomplissement: pièce collectée
@@ -512,6 +627,7 @@ function tryFinishLevel() {
         unlockedLevel = TOTAL_LEVELS;
         saveGame();
         stopThemeMusic();
+        statsEndSession();
         showOverlay('Victoire', `Score final ${score} | Boss vaincu`, 'Rejouer');
         voiceNarrator.playWin();
         return;
@@ -645,6 +761,7 @@ function drawPlayer() {
             ninja: { body: '#2d3436', head: '#b8b8b8', legs: '#1a1a2e' },
             robot: { body: '#636e72', head: '#dfe6e9', legs: '#2d3436' },
             mage: { body: '#9b59b6', head: '#e8b4b4', legs: '#8e44ad' },
+            // Ajoutez d'autres palettes si vous créez plus de personnages
             knight: { body: '#95a5a6', head: '#ecf0f1', legs: '#7f8c8d' },
             alien: { body: '#27ae60', head: '#2ecc71', legs: '#1e8449' },
             pirate: { body: '#8B4513', head: '#e8b4b4', legs: '#2c3e50' },
@@ -726,6 +843,7 @@ function initGame() {
     // Initialiser le système de compétences
     initializeSkillsSystem();
     updateHUD();
+    statsStartSession();
 }
 function startGame() {
     if (gameState === STATE.LEVEL_CLEAR) loadLevel(currentLevel + 1);
@@ -833,6 +951,30 @@ freeModeToggle.addEventListener('change', () => {
     renderLevelButtons();
 });
 difficultySelect.addEventListener('change', () => { difficulty = difficultySelect.value; saveGame(); });
+
+// Stats panel
+const statsBtn = document.getElementById('statsBtn');
+const statsPanel = document.getElementById('stats-panel');
+const closeStatsBtn = document.getElementById('closeStatsBtn');
+
+function refreshStatsUI() {
+    const d = getStatsDisplay();
+    document.getElementById('stats-time').textContent = d.timeStr;
+    document.getElementById('stats-jump-accuracy').textContent = d.jumpAccuracy + '%';
+    document.getElementById('stats-jump-detail').textContent = `${d.successfulJumps} / ${d.totalJumps} sauts reussis`;
+    document.getElementById('stats-coins-total').textContent = `${d.totalCollected} / ${d.totalAvailable}`;
+    document.getElementById('stats-coins-detail').innerHTML = d.coinsHtml;
+    document.getElementById('stats-deaths-detail').innerHTML = d.deathsHtml;
+}
+
+statsBtn.addEventListener('click', () => {
+    refreshStatsUI();
+    statsPanel.classList.toggle('hidden');
+});
+closeStatsBtn.addEventListener('click', () => {
+    statsPanel.classList.add('hidden');
+});
+
 characterButtons.forEach((btn) => {
     btn.addEventListener('click', () => {
         characterButtons.forEach((b) => b.classList.remove('active'));
@@ -844,6 +986,7 @@ characterButtons.forEach((btn) => {
     });
 });
 
+loadStats();
 loadSave();
 applyCharacterTraits();
 freeModeToggle.checked = freeMode;
