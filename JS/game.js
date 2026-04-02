@@ -294,7 +294,9 @@ function stopThemeMusic() {
     bgMusic.currentTime = 0;
 }
 function startThemeMusic() {
-    bgMusic.play().catch(() => {});
+    bgMusic.play().catch((e) => {
+        console.warn("Impossible de jouer la musique:", e.message);
+    });
 }
 function beep(freq = 300, dur = 0.07) {}
 
@@ -959,20 +961,27 @@ const closeStatsBtn = document.getElementById('closeStatsBtn');
 
 function refreshStatsUI() {
     const d = getStatsDisplay();
-    document.getElementById('stats-time').textContent = d.timeStr;
-    document.getElementById('stats-jump-accuracy').textContent = d.jumpAccuracy + '%';
-    document.getElementById('stats-jump-detail').textContent = `${d.successfulJumps} / ${d.totalJumps} sauts reussis`;
-    document.getElementById('stats-coins-total').textContent = `${d.totalCollected} / ${d.totalAvailable}`;
-    document.getElementById('stats-coins-detail').innerHTML = d.coinsHtml;
-    document.getElementById('stats-deaths-detail').innerHTML = d.deathsHtml;
+    const el = (id) => document.getElementById(id);
+    const setTime = el('stats-time');
+    if (setTime) setTime.textContent = d.timeStr;
+    const setAccuracy = el('stats-jump-accuracy');
+    if (setAccuracy) setAccuracy.textContent = d.jumpAccuracy + '%';
+    const setDetail = el('stats-jump-detail');
+    if (setDetail) setDetail.textContent = `${d.successfulJumps} / ${d.totalJumps} sauts reussis`;
+    const setCoins = el('stats-coins-total');
+    if (setCoins) setCoins.textContent = `${d.totalCollected} / ${d.totalAvailable}`;
+    const setCoinsDetail = el('stats-coins-detail');
+    if (setCoinsDetail) setCoinsDetail.innerHTML = d.coinsHtml;
+    const setDeaths = el('stats-deaths-detail');
+    if (setDeaths) setDeaths.innerHTML = d.deathsHtml;
 }
 
-statsBtn.addEventListener('click', () => {
+if (statsBtn) statsBtn.addEventListener('click', () => {
     refreshStatsUI();
-    statsPanel.classList.toggle('hidden');
+    if (statsPanel) statsPanel.classList.toggle('hidden');
 });
-closeStatsBtn.addEventListener('click', () => {
-    statsPanel.classList.add('hidden');
+if (closeStatsBtn) closeStatsBtn.addEventListener('click', () => {
+    if (statsPanel) statsPanel.classList.add('hidden');
 });
 
 characterButtons.forEach((btn) => {
@@ -996,6 +1005,7 @@ renderLevelButtons();
 showOverlay('Mod Runner V3', 'Nouveau: personnage selectable, musique de theme et boss final niveau 10.', 'Demarrer');
 loadLevel(1);
 updatePauseButtons();
+voiceNarrator.init();
 
 // Responsive canvas scaling
 function resizeCanvas() {

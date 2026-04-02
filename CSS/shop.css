@@ -356,6 +356,65 @@
     animation: rainbow 2s linear infinite;
 }
 
+/* Shop Panel (in-game) */
+#shopPanel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, #2d1b4e 0%, #1a1a2e 100%);
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    max-width: 800px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    border: 2px solid rgba(255, 215, 0, 0.3);
+}
+
+#shopPanel h3 {
+    color: #FFD700;
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 1.5em;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+.shop-tabs {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.tab-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tab-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.tab-btn.active {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #4a3728;
+    border-color: transparent;
+}
+
+#shopGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+}
+
 /* Caché */
 .hidden {
     display: none !important;

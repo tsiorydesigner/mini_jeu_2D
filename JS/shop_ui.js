@@ -35,9 +35,9 @@ class ShopUI {
         if (this.tabs.particle) this.tabs.particle.addEventListener('click', () => this.switchCategory('particle'));
         if (this.tabs.consumable) this.tabs.consumable.addEventListener('click', () => this.switchCategory('consumable'));
 
-        // Touche M pour ouvrir/fermer le magasin
+        // Touche M pour ouvrir/fermer le magasin (seulement hors jeu)
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'm' || e.key === 'M') {
+            if ((e.key === 'm' || e.key === 'M') && typeof gameState !== 'undefined' && gameState !== 1) {
                 if (this.shopPanel && this.shopPanel.classList.contains('hidden')) {
                     this.showShopPanel();
                 } else if (this.shopPanel) {

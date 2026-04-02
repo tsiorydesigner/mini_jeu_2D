@@ -113,6 +113,59 @@
                     <button class="touch-btn" id="touchDash">&#9889;</button>
                 </div>
             </div>
+
+            <!-- Skills Panel -->
+            <div id="skillsPanel" class="hidden">
+                <div class="panel-header">
+                    <h3>Compétences</h3>
+                    <span id="skillPointsDisplay">0</span>
+                    <button id="closeSkillsBtn" class="close-panel-btn">×</button>
+                </div>
+                <div id="skillGrid"></div>
+            </div>
+
+            <!-- Achievements Panel -->
+            <div id="achievementsPanel" class="hidden">
+                <div class="panel-header">
+                    <h3>Accomplissements</h3>
+                    <span id="achievementsProgressText">0/0</span>
+                    <button id="closeAchievementsBtn" class="close-panel-btn">×</button>
+                </div>
+                <div id="achievementsProgressFill"></div>
+                <div id="achievementsGrid"></div>
+                <button id="resetAchievementsBtn" class="secondary-btn">Reset</button>
+            </div>
+
+            <!-- Shop Panel -->
+            <div id="shopPanel" class="hidden">
+                <div class="panel-header">
+                    <h3>Magasin</h3>
+                    <span>Pièces: <span id="walletAmount">0</span></span>
+                    <span>Vies: <span id="extraLivesDisplay">0</span></span>
+                    <button id="closeShopBtn" class="close-panel-btn">×</button>
+                </div>
+                <div class="shop-tabs">
+                    <button id="tabSkins" class="tab-btn active">Skins</button>
+                    <button id="tabParticles" class="tab-btn">Particules</button>
+                    <button id="tabConsumables" class="tab-btn">Consommables</button>
+                </div>
+                <div id="shopGrid"></div>
+            </div>
+
+            <!-- Stats Panel -->
+            <div id="stats-panel" class="hidden">
+                <div class="panel-header">
+                    <h3>Statistiques</h3>
+                    <button id="closeStatsBtn" class="close-panel-btn">×</button>
+                </div>
+                <div>Temps de jeu: <span id="stats-time">0s</span></div>
+                <div>Précision des sauts: <span id="stats-jump-accuracy">0%</span></div>
+                <div id="stats-jump-detail"></div>
+                <div>Pièces: <span id="stats-coins-total">0/0</span></div>
+                <div id="stats-coins-detail"></div>
+                <div>Morts par niveau:</div>
+                <div id="stats-deaths-detail"></div>
+            </div>
         </div>
     </div>
 

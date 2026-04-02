@@ -32,9 +32,9 @@ class AchievementsUI {
             }
         });
 
-        // Touche A pour ouvrir/fermer
+        // Touche A pour ouvrir/fermer (seulement hors jeu)
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'a' || e.key === 'A') {
+            if ((e.key === 'a' || e.key === 'A') && typeof gameState !== 'undefined' && gameState !== 1) {
                 if (this.achievementsPanel && this.achievementsPanel.classList.contains('hidden')) {
                     this.showAchievementsPanel();
                 } else if (this.achievementsPanel) {

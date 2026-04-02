@@ -22,9 +22,9 @@ class SkillsUI {
             this.hideSkillsPanel();
         });
 
-        // Touche S pour ouvrir les compétences
+        // Touche S pour ouvrir les compétences (seulement hors jeu)
         document.addEventListener('keydown', (e) => {
-            if (e.key === 's' || e.key === 'S') {
+            if ((e.key === 's' || e.key === 'S') && typeof gameState !== 'undefined' && gameState !== 1) {
                 if (this.skillsPanel && this.skillsPanel.classList.contains('hidden')) {
                     this.showSkillsPanel();
                 } else if (this.skillsPanel) {
@@ -188,6 +188,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Fonctions globales pour le jeu
 function initializeSkillsSystem() {
+    // Assurer que skillsUI est initialisé
+    if (!skillsUI) {
+        skillsUI = new SkillsUI();
+    }
+    
     // Initialiser le système avec le niveau actuel du joueur
     skillSystem.playerLevel = currentLevel || 1;
     skillSystem.skillPoints = Math.max(0, skillSystem.playerLevel - 1); // 1 point par niveau après le premier
