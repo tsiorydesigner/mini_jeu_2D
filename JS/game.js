@@ -11,7 +11,6 @@ const levelSelectBtn = document.getElementById('levelSelectBtn');
 const resetProgressBtn = document.getElementById('resetProgressBtn');
 const freeModeToggle = document.getElementById('freeModeToggle');
 const difficultySelect = document.getElementById('difficultySelect');
-const volumeSlider = document.getElementById('volumeSlider');
 const levelGrid = document.getElementById('level-grid');
 const characterButtons = document.querySelectorAll('.character-btn');
 const pauseBtn = document.getElementById('pauseBtn');
@@ -62,11 +61,6 @@ let powerups = [];
 let checkpoints = [];
 let particles = [];
 let boss = null;
-
-let audioCtx = null;
-let musicGain = null;
-let musicTimer = null;
-let musicStep = 0;
 
 const themes = [
     { name: 'Foret', skyTop: '#79c267', skyBottom: '#bfe8a2', platformMain: '#4f8a3d', platformTop: '#7acb52', platformBorder: '#2c5b24', coin: '#ffd54f', enemy: '#8e3b2f' },
@@ -156,73 +150,17 @@ function loadSave() {
     }
 }
 
+const bgMusic = document.getElementById('bgMusic');
+bgMusic.volume = 0.5;
+
 function stopThemeMusic() {
-    if (musicTimer) clearInterval(musicTimer);
-    musicTimer = null;
+    bgMusic.pause();
+    bgMusic.currentTime = 0;
 }
 function startThemeMusic() {
-    stopThemeMusic();
-    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-    if (!musicGain) {
-        musicGain = audioCtx.createGain();
-        musicGain.connect(audioCtx.destination);
-    }
-    musicGain.gain.value = Math.max(0, volume * 0.024);
-
-    const base = 96 + currentLevel * 4;
-    const leadScale = [0, 3, 7, 10, 12, 10, 7, 3, 5, 3, 2, 0];
-    const bassScale = [0, 0, -5, -5, -7, -7, -5, -5, -2, -2, -5, -5];
-
-    function playTone(freq, type, dur, gainValue) {
-        const osc = audioCtx.createOscillator();
-        const g = audioCtx.createGain();
-        osc.type = type;
-        osc.frequency.value = Math.max(45, freq);
-        g.gain.value = gainValue;
-        osc.connect(g);
-        g.connect(musicGain);
-        osc.start();
-        osc.stop(audioCtx.currentTime + dur);
-    }
-
-    musicStep = 0;
-    musicTimer = setInterval(() => {
-        if (![STATE.PLAYING, STATE.MENU, STATE.PAUSED].includes(gameState)) return;
-        const i = musicStep % leadScale.length;
-
-        // Lead "orbital" arpeggio
-        playTone(base * 2 + leadScale[i] * 12, currentLevel >= 7 ? 'triangle' : 'sine', 0.18, 0.11);
-
-        // Soft pad layer
-        if (musicStep % 2 === 0) {
-            playTone(base * 1.5 + leadScale[(i + 3) % leadScale.length] * 7, 'sine', 0.28, 0.05);
-        }
-
-        // Bass pulse
-        if (musicStep % 2 === 0) {
-            playTone(base + bassScale[i] * 3.2, 'sawtooth', 0.16, 0.08);
-        }
-
-        // Tiny hi-hat click (noise-ish high pulse)
-        if (musicStep % 4 !== 0) {
-            playTone(2200 + (musicStep % 3) * 120, 'square', 0.03, 0.03);
-        }
-
-        musicStep++;
-    }, 170);
+    bgMusic.play().catch(() => {});
 }
-function beep(freq = 300, dur = 0.07) {
-    if (volume <= 0) return;
-    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-    const o = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    o.frequency.value = freq;
-    g.gain.value = volume * 0.03;
-    o.connect(g);
-    g.connect(audioCtx.destination);
-    o.start();
-    o.stop(audioCtx.currentTime + dur);
-}
+function beep(freq = 300, dur = 0.07) {}
 
 function renderLevelButtons() {
     levelGrid.innerHTML = '';
@@ -279,25 +217,6 @@ function loadLevel(level) {
     currentLevel = level;
     currentTheme = themes[level - 1];
     parseLevel(levelMapFor(level));
-    
-    // Démarrer les sons ambiants pour le thème actuel
-    if (typeof audioManager !== 'undefined') {
-        const themeNames = ['forest', 'cave', 'lava', 'ice', 'city', 'space'];
-        const themeName = themeNames[(level - 1) % themeNames.length];
-        audioManager.startAmbient(themeName);
-        audioManager.startMusic();
-        
-        // Ajuster l'intensité selon le niveau
-        if (level <= 3) {
-            audioManager.setIntensity('calm');
-        } else if (level <= 7) {
-            audioManager.setIntensity('normal');
-        } else if (level < 10) {
-            audioManager.setIntensity('intense');
-        } else {
-            audioManager.setIntensity('boss');
-        }
-    }
     
     // Ajouter les vies supplémentaires du magasin
     if (typeof shopManager !== 'undefined') {
@@ -362,11 +281,6 @@ function loseLife() {
     if (lives <= 0) { 
         gameState = STATE.GAME_OVER; 
         stopThemeMusic(); 
-        // Arrêter les sons ambiants
-        if (typeof audioManager !== 'undefined') {
-            audioManager.stopAmbient();
-            audioManager.stopMusic();
-        }
         showOverlay('Game Over', `Score: ${score}`, 'Rejouer'); 
         return; 
     }
@@ -536,11 +450,6 @@ function tryFinishLevel() {
         unlockedLevel = TOTAL_LEVELS;
         saveGame();
         stopThemeMusic();
-        // Arrêter les sons ambiants à la victoire
-        if (typeof audioManager !== 'undefined') {
-            audioManager.stopAmbient();
-            audioManager.stopMusic();
-        }
         showOverlay('Victoire', `Score final ${score} | Boss vaincu`, 'Rejouer');
         return;
     }
@@ -751,11 +660,6 @@ function initGame() {
     updateHUD();
 }
 function startGame() {
-    // Résumé du contexte audio (nécessaire après interaction utilisateur)
-    if (typeof audioManager !== 'undefined') {
-        audioManager.resumeContext();
-    }
-    
     if (gameState === STATE.LEVEL_CLEAR) loadLevel(currentLevel + 1);
     else initGame();
     gameState = STATE.PLAYING;
@@ -764,8 +668,15 @@ function startGame() {
     updatePauseButtons();
 }
 function togglePause() {
-    if (gameState === STATE.PLAYING) { gameState = STATE.PAUSED; showOverlay('Pause', 'P pour reprendre', 'Reprendre'); }
-    else if (gameState === STATE.PAUSED) { gameState = STATE.PLAYING; hideOverlay(); }
+    if (gameState === STATE.PLAYING) {
+        gameState = STATE.PAUSED;
+        bgMusic.pause();
+        showOverlay('Pause', 'P pour reprendre', 'Reprendre');
+    } else if (gameState === STATE.PAUSED) {
+        gameState = STATE.PLAYING;
+        bgMusic.play().catch(() => {});
+        hideOverlay();
+    }
     updatePauseButtons();
 }
 
@@ -835,11 +746,6 @@ freeModeToggle.addEventListener('change', () => {
     renderLevelButtons();
 });
 difficultySelect.addEventListener('change', () => { difficulty = difficultySelect.value; saveGame(); });
-volumeSlider.addEventListener('input', () => {
-    volume = Number(volumeSlider.value) / 100;
-    if (musicGain) musicGain.gain.value = Math.max(0, volume * 0.018);
-    saveGame();
-});
 characterButtons.forEach((btn) => {
     btn.addEventListener('click', () => {
         characterButtons.forEach((b) => b.classList.remove('active'));
@@ -852,10 +758,49 @@ characterButtons.forEach((btn) => {
 loadSave();
 freeModeToggle.checked = freeMode;
 difficultySelect.value = difficulty;
-volumeSlider.value = String(Math.floor(volume * 100));
 characterButtons.forEach((btn) => btn.classList.toggle('active', btn.dataset.character === selectedCharacter));
 renderLevelButtons();
 showOverlay('Mod Runner V3', 'Nouveau: personnage selectable, musique de theme et boss final niveau 10.', 'Demarrer');
 loadLevel(1);
 updatePauseButtons();
+
+// Responsive canvas scaling
+function resizeCanvas() {
+    const container = document.getElementById('game-container');
+    const cw = container.clientWidth;
+    const ch = container.clientHeight;
+    const aspect = CANVAS_W / CANVAS_H;
+    let w, h;
+    if (cw / ch > aspect) {
+        h = ch;
+        w = h * aspect;
+    } else {
+        w = cw;
+        h = w / aspect;
+    }
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+}
+
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+// Touch controls for mobile/Android
+const touchLeft = document.getElementById('touchLeft');
+const touchRight = document.getElementById('touchRight');
+const touchJump = document.getElementById('touchJump');
+const touchDash = document.getElementById('touchDash');
+
+function addTouchBtn(el, key) {
+    if (!el) return;
+    el.addEventListener('touchstart', (e) => { e.preventDefault(); keys[key] = true; }, { passive: false });
+    el.addEventListener('touchend', (e) => { e.preventDefault(); keys[key] = false; }, { passive: false });
+    el.addEventListener('touchcancel', () => { keys[key] = false; });
+}
+
+addTouchBtn(touchLeft, 'ArrowLeft');
+addTouchBtn(touchRight, 'ArrowRight');
+addTouchBtn(touchJump, 'ArrowUp');
+addTouchBtn(touchDash, 'Shift');
+
 gameLoop();
