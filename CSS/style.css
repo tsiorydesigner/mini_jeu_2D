@@ -250,6 +250,67 @@ body {
     font-size: 0.9em;
 }
 
+#volumeRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.volume-icon-btn {
+    background: none;
+    border: 1px solid rgba(120, 170, 255, 0.3);
+    border-radius: 6px;
+    color: #dce9ff;
+    font-size: 1.2em;
+    padding: 4px 8px;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.volume-icon-btn:hover {
+    background: rgba(52, 152, 219, 0.2);
+}
+
+.volume-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100px;
+    height: 6px;
+    background: rgba(19, 52, 83, 0.8);
+    border-radius: 4px;
+    outline: none;
+    border: 1px solid rgba(120, 170, 255, 0.2);
+    cursor: pointer;
+}
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: linear-gradient(135deg, #3498db, #6c5ce7);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(108, 92, 231, 0.5);
+}
+
+.volume-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: linear-gradient(135deg, #3498db, #6c5ce7);
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+}
+
+.volume-label {
+    font-size: 0.8em;
+    color: #8ab4f8;
+    min-width: 32px;
+    text-align: right;
+}
+
 #characterSelect {
     display: flex;
     gap: 6px;

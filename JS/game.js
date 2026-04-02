@@ -150,6 +150,38 @@ function loadSave() {
     }
 }
 
+function applyCharacterTraits() {
+    // Définit des modificateurs de joueur selon `selectedCharacter`
+    // Valeurs par défaut
+    player.accelMult = 1;
+    player.jumpMult = 1;
+    player.maxJumps = 2;
+    player.hasDash = true;
+    player.dashPower = 11;
+    player.extraLifeOnStart = 0;
+
+    if (selectedCharacter === 'runner') {
+        player.accelMult = 1.15;
+        player.jumpMult = 1.0;
+        player.maxJumps = 2;
+        player.hasDash = true;
+        player.dashPower = 11;
+    } else if (selectedCharacter === 'ninja') {
+        player.accelMult = 1.0;
+        player.jumpMult = 1.12;
+        player.maxJumps = 3;
+        player.hasDash = true;
+        player.dashPower = 13;
+    } else if (selectedCharacter === 'robot') {
+        player.accelMult = 0.92;
+        player.jumpMult = 0.95;
+        player.maxJumps = 2;
+        player.hasDash = false;
+        player.dashPower = 0;
+        player.extraLifeOnStart = 1;
+    }
+}
+
 const bgMusic = document.getElementById('bgMusic');
 bgMusic.volume = 0.5;
 
@@ -211,7 +243,7 @@ function parseLevel(levelMap) {
 function respawn() {
     const spawn = checkpoint || { x: TILE, y: TILE };
     player.x = spawn.x; player.y = spawn.y; player.vx = 0; player.vy = 0; player.onGround = false;
-    player.jumpsLeft = 2; player.invincible = 80;
+    player.jumpsLeft = player.maxJumps || 2; player.invincible = 80;
 }
 function loadLevel(level) {
     currentLevel = level;
@@ -289,22 +321,23 @@ function loseLife() {
 function playerJumpPressed() { return keys['ArrowUp'] || keys[' ']; }
 
 function updatePlayer() {
-    if (keys.ArrowLeft) { player.vx -= PLAYER_ACCEL * (difficulty === 'hard' ? 0.28 : 0.3); player.facingRight = false; }
-    if (keys.ArrowRight) { player.vx += PLAYER_ACCEL * (difficulty === 'hard' ? 0.28 : 0.3); player.facingRight = true; }
+    const accelFactor = (difficulty === 'hard' ? 0.28 : 0.3) * (player.accelMult || 1);
+    if (keys.ArrowLeft) { player.vx -= PLAYER_ACCEL * accelFactor; player.facingRight = false; }
+    if (keys.ArrowRight) { player.vx += PLAYER_ACCEL * accelFactor; player.facingRight = true; }
     player.vx *= FRICTION;
     if (Math.abs(player.vx) < 0.08) player.vx = 0;
     player.vx = Math.max(-PLAYER_ACCEL, Math.min(PLAYER_ACCEL, player.vx));
     player.jumpBuffer = playerJumpPressed() ? 7 : Math.max(0, player.jumpBuffer - 1);
     player.coyote = player.onGround ? 7 : Math.max(0, player.coyote - 1);
     if (player.jumpBuffer > 0 && (player.coyote > 0 || player.jumpsLeft > 0)) {
-        player.vy = JUMP_FORCE;
+        player.vy = JUMP_FORCE * (player.jumpMult || 1);
         if (player.coyote <= 0) player.jumpsLeft--;
         player.onGround = false;
         player.jumpBuffer = 0;
         beep(520, 0.05);
     }
     if (keys.Shift && player.hasDash && player.dashCd <= 0) {
-        player.vx = player.facingRight ? 11 : -11;
+        player.vx = player.facingRight ? (player.dashPower || 11) : -(player.dashPower || 11);
         player.dashCd = 50;
         beep(220, 0.05);
     }
@@ -653,6 +686,9 @@ function updatePauseButtons() {
 function initGame() {
     score = 0;
     lives = difficulty === 'hard' ? 2 : 3;
+    // Appliquer les traits du personnage choisi avant de démarrer
+    applyCharacterTraits();
+    lives += player.extraLifeOnStart || 0;
     loadLevel(1);
     
     // Initialiser le système de compétences
@@ -752,10 +788,13 @@ characterButtons.forEach((btn) => {
         btn.classList.add('active');
         selectedCharacter = btn.dataset.character;
         saveGame();
+        applyCharacterTraits();
+        updateHUD();
     });
 });
 
 loadSave();
+applyCharacterTraits();
 freeModeToggle.checked = freeMode;
 difficultySelect.value = difficulty;
 characterButtons.forEach((btn) => btn.classList.toggle('active', btn.dataset.character === selectedCharacter));
@@ -802,5 +841,42 @@ addTouchBtn(touchLeft, 'ArrowLeft');
 addTouchBtn(touchRight, 'ArrowRight');
 addTouchBtn(touchJump, 'ArrowUp');
 addTouchBtn(touchDash, 'Shift');
+
+// Volume control
+const volumeSlider = document.getElementById('volumeSlider');
+const volumeLabel = document.getElementById('volumeLabel');
+const muteBtn = document.getElementById('muteBtn');
+let previousVolume = 0.5;
+let isMuted = false;
+
+volumeSlider.addEventListener('input', () => {
+    const val = Number(volumeSlider.value) / 100;
+    bgMusic.volume = val;
+    volumeLabel.textContent = volumeSlider.value + '%';
+    if (val > 0) {
+        isMuted = false;
+        previousVolume = val;
+        muteBtn.innerHTML = '&#128266;';
+    } else {
+        isMuted = true;
+        muteBtn.innerHTML = '&#128263;';
+    }
+});
+
+muteBtn.addEventListener('click', () => {
+    isMuted = !isMuted;
+    if (isMuted) {
+        previousVolume = bgMusic.volume;
+        bgMusic.volume = 0;
+        volumeSlider.value = 0;
+        volumeLabel.textContent = '0%';
+        muteBtn.innerHTML = '&#128263;';
+    } else {
+        bgMusic.volume = previousVolume || 0.5;
+        volumeSlider.value = Math.round(bgMusic.volume * 100);
+        volumeLabel.textContent = volumeSlider.value + '%';
+        muteBtn.innerHTML = '&#128266;';
+    }
+});
 
 gameLoop();

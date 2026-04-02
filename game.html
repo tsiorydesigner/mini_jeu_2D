@@ -15,7 +15,7 @@
             <a href="index.html">← Accueil</a>
         </nav>
         <!-- Title -->
-        <h1 id="game-title">Mod Runner</h1>
+        
 
         <!-- Game container with canvas and overlays -->
         <div id="game-container">
@@ -68,6 +68,11 @@
                                 <option value="hard">Difficile</option>
                             </select>
                         </label>
+                        <div id="volumeRow">
+                            <button id="muteBtn" class="volume-icon-btn" title="Muet">&#128266;</button>
+                            <input type="range" id="volumeSlider" class="volume-slider" min="0" max="100" value="50">
+                            <span id="volumeLabel" class="volume-label">50%</span>
+                        </div>
                     </div>
                     <div id="level-grid" class="hidden"></div>
                     <p id="controls-hint">
@@ -91,57 +96,7 @@
         </div>
     </div>
 
-    <!-- Skills Panel -->
-    <div id="skillsPanel" class="skill-panel hidden">
-        <h2>Compétences</h2>
-        <div class="skill-points">
-            Points de compétence: <span id="skillPointsDisplay">0</span>
-        </div>
-        <div id="skillGrid" class="skill-grid"></div>
-        <div class="skill-controls">
-            <button id="closeSkillsBtn" class="skill-btn">Fermer</button>
-        </div>
-    </div>
-
-    <!-- Achievements Panel -->
-    <div id="achievementsPanel" class="achievements-panel hidden">
-        <h2>Accomplissements</h2>
-        <div class="achievements-progress">
-            <div class="achievements-progress-text">
-                Progression: <span id="achievementsProgressText">0/0</span>
-            </div>
-            <div class="achievements-progress-bar">
-                <div id="achievementsProgressFill" class="achievements-progress-fill" style="width: 0%"></div>
-            </div>
-        </div>
-        <div id="achievementsGrid" class="achievements-grid"></div>
-        <div class="achievements-controls">
-            <button id="closeAchievementsBtn" class="achievements-btn">Fermer</button>
-            <button id="resetAchievementsBtn" class="achievements-btn" style="background: rgba(255, 100, 100, 0.3); border-color: rgba(255, 100, 100, 0.5);">Reinitialiser</button>
-        </div>
-    </div>
-
-    <!-- Shop Panel -->
-    <div id="shopPanel" class="shop-panel hidden">
-        <h2>Magasin</h2>
-        <div class="shop-wallet">
-            <span class="shop-wallet-icon">🪙</span>
-            <span class="shop-wallet-text">Porte-monnaie:</span>
-            <span id="walletAmount" class="shop-wallet-amount">0</span>
-        </div>
-        <div class="shop-lives-counter">
-            Vies supplémentaires: <span id="extraLivesDisplay">0</span> ❤️
-        </div>
-        <div class="shop-tabs">
-            <button id="tabSkins" class="shop-tab active">Skins</button>
-            <button id="tabParticles" class="shop-tab">Particules</button>
-            <button id="tabConsumables" class="shop-tab">Consommables</button>
-        </div>
-        <div id="shopGrid" class="shop-grid"></div>
-        <div class="shop-controls">
-            <button id="closeShopBtn" class="shop-control-btn">Fermer</button>
-        </div>
-    </div>
+    <audio id="bgMusic" loop preload="auto" src="song/Orbia song 2.mp3"></audio>
 
     <script src="JS/skills.js"></script>
     <script src="JS/skills_ui.js"></script>
