@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="CSS/skills.css">
     <link rel="stylesheet" href="CSS/achievements.css">
     <link rel="stylesheet" href="CSS/shop.css">
+    <link rel="stylesheet" href="CSS/controls.css">
 </head>
 <body>
     <div id="game-wrapper">
@@ -52,6 +53,7 @@
                     <button id="skillsBtn" class="secondary-btn">Compétences</button>
                     <button id="achievementsBtn" class="secondary-btn">Accomplissements</button>
                     <button id="shopBtn" class="secondary-btn">Magasin</button>
+                    <button id="controlsBtn" class="secondary-btn">Contrôles</button>
                     <div id="options-panel">
                         <label>Personnage
                             <div id="characterSelect">
@@ -75,6 +77,19 @@
                         </div>
                     </div>
                     <div id="level-grid" class="hidden"></div>
+
+                    <!-- Panneau de configuration des contrôles -->
+                    <div id="controls-ui" class="hidden">
+                        <h3>Configuration des Touches</h3>
+                        <div class="rebind-grid">
+                            <div class="rebind-item"><span>Gauche</span><button id="rebind-left">...</button></div>
+                            <div class="rebind-item"><span>Droite</span><button id="rebind-right">...</button></div>
+                            <div class="rebind-item"><span>Saut</span><button id="rebind-jump">...</button></div>
+                            <div class="rebind-item"><span>Dash</span><button id="rebind-dash">...</button></div>
+                        </div>
+                        <button id="closeControlsBtn" class="secondary-btn">Retour</button>
+                    </div>
+
                     <p id="controls-hint">
                         Fleches pour bouger • Haut/Espace sauter • Shift dash • P pause<br>
                         Double saut, checkpoint, power-up, pieges et ennemis varies
@@ -98,6 +113,7 @@
 
     <audio id="bgMusic" loop preload="auto" src="song/Orbia song 2.mp3"></audio>
 
+    <script src="JS/controls.js"></script>
     <script src="JS/skills.js"></script>
     <script src="JS/skills_ui.js"></script>
     <script src="JS/achievements.js"></script>

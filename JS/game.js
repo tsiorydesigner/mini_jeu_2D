@@ -318,12 +318,30 @@ function loseLife() {
     }
     respawn();
 }
-function playerJumpPressed() { return keys['ArrowUp'] || keys[' ']; }
+function playerJumpPressed() { 
+    return window.controlsManager ? 
+        window.controlsManager.isActionActive('jump') : 
+        (keys['ArrowUp'] || keys[' ']); 
+}
 
 function updatePlayer() {
     const accelFactor = (difficulty === 'hard' ? 0.28 : 0.3) * (player.accelMult || 1);
-    if (keys.ArrowLeft) { player.vx -= PLAYER_ACCEL * accelFactor; player.facingRight = false; }
-    if (keys.ArrowRight) { player.vx += PLAYER_ACCEL * accelFactor; player.facingRight = true; }
+    
+    // Use controls manager if available, fallback to keyboard
+    if (window.controlsManager) {
+        if (window.controlsManager.isActionActive('moveLeft')) { 
+            player.vx -= PLAYER_ACCEL * accelFactor; 
+            player.facingRight = false; 
+        }
+        if (window.controlsManager.isActionActive('moveRight')) { 
+            player.vx += PLAYER_ACCEL * accelFactor; 
+            player.facingRight = true; 
+        }
+    } else {
+        if (keys.ArrowLeft) { player.vx -= PLAYER_ACCEL * accelFactor; player.facingRight = false; }
+        if (keys.ArrowRight) { player.vx += PLAYER_ACCEL * accelFactor; player.facingRight = true; }
+    }
+    
     player.vx *= FRICTION;
     if (Math.abs(player.vx) < 0.08) player.vx = 0;
     player.vx = Math.max(-PLAYER_ACCEL, Math.min(PLAYER_ACCEL, player.vx));
@@ -336,7 +354,13 @@ function updatePlayer() {
         player.jumpBuffer = 0;
         beep(520, 0.05);
     }
-    if (keys.Shift && player.hasDash && player.dashCd <= 0) {
+    
+    // Dash input
+    const dashPressed = window.controlsManager ? 
+        window.controlsManager.isActionActive('dash') : 
+        keys.Shift;
+    
+    if (dashPressed && player.hasDash && player.dashCd <= 0) {
         player.vx = player.facingRight ? (player.dashPower || 11) : -(player.dashPower || 11);
         player.dashCd = 50;
         beep(220, 0.05);
@@ -746,8 +770,18 @@ function gameLoop() {
 
 document.addEventListener('keydown', (e) => {
     keys[e.key] = true;
+    
+    // Check for pause using controls manager
+    const pausePressed = window.controlsManager ? 
+        window.controlsManager.isActionActive('pause') : 
+        (e.key.toLowerCase() === 'p' || e.key === 'Escape');
+    
+    if (pausePressed) {
+        e.preventDefault();
+        togglePause();
+    }
+    
     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' ', 'Shift'].includes(e.key)) e.preventDefault();
-    if (e.key.toLowerCase() === 'p') togglePause();
     if (e.key === 'Enter' && [STATE.MENU, STATE.GAME_OVER, STATE.LEVEL_CLEAR, STATE.WIN, STATE.PAUSED].includes(gameState)) startBtn.click();
     if (freeMode) {
         if (e.key >= '1' && e.key <= '9') { loadLevel(Number(e.key)); gameState = STATE.PLAYING; startThemeMusic(); hideOverlay(); }
@@ -755,6 +789,15 @@ document.addEventListener('keydown', (e) => {
     }
 });
 document.addEventListener('keyup', (e) => { keys[e.key] = false; });
+
+// Make game object globally available for controls manager
+window.game = {
+    handleInput: function(action, isPressed, inputType, value = 1) {
+        // This function is called by the controls manager
+        // The actual input handling is done in updatePlayer() and other game functions
+        // through the isActionActive() method
+    }
+};
 
 startBtn.addEventListener('click', () => {
     if (gameState === STATE.PAUSED) { togglePause(); return; }
