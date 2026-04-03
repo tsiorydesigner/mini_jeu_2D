@@ -56,4 +56,13 @@ QR code pour mobile
 Niveau généré aléatoirement chaque jour
 Même seed pour tous les joueurs
 Classement du jour
-14. 
+14. Recommandations de Difficulté
+PROBLÈME COURANT: Les gens quittent si c'est trop dur trop vite
+
+RECOMMANDÉ:
+  Niveau 1-2 : Tutoriel (facile)
+  Niveau 3-5 : Introduction mécanique
+  Niveau 6-8 : Challenge modéré
+  Niveau 9-10: Boss / Expert
+  
+→ Chaque niveau = apprendre 1 truc nouveau

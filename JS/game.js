@@ -99,6 +99,27 @@ const player = {
     jumpsLeft: 2, hasDash: true, dashCd: 0, powerShield: 0, coyote: 0, jumpBuffer: 0,
 };
 const camera = { x: 0, y: 0 };
+
+// Cache des images de fond
+const backgroundImageCache = {};
+function loadBackgroundImage(imagePath) {
+    if (!imagePath) return null;
+    if (backgroundImageCache[imagePath]) {
+        return backgroundImageCache[imagePath];
+    }
+    
+    const img = new Image();
+    img.onload = function() {
+        backgroundImageCache[imagePath] = img;
+    };
+    img.onerror = function() {
+        console.warn(`Impossible de charger l'image de fond: ${imagePath}`);
+        backgroundImageCache[imagePath] = null;
+    };
+    img.src = imagePath;
+    return null; // Retourner null au premier appel, l'image sera en cache après le chargement
+}
+
 let LEVEL_W = 0;
 let LEVEL_H = 0;
 
@@ -112,16 +133,16 @@ let particles = [];
 let boss = null;
 
 const themes = [
-    { name: 'Foret', skyTop: '#79c267', skyBottom: '#bfe8a2', platformMain: '#4f8a3d', platformTop: '#7acb52', platformBorder: '#2c5b24', coin: '#ffd54f', enemy: '#8e3b2f' },
-    { name: 'Desert', skyTop: '#f7b267', skyBottom: '#fceabb', platformMain: '#d39a55', platformTop: '#e7bd79', platformBorder: '#8a5b2d', coin: '#ffcf66', enemy: '#b85c38' },
-    { name: 'Glace', skyTop: '#9ed8ff', skyBottom: '#e5f6ff', platformMain: '#8fd1ea', platformTop: '#d0f3ff', platformBorder: '#4b8ea8', coin: '#d7f8ff', enemy: '#5fa8d3' },
-    { name: 'Lave', skyTop: '#3a0d0d', skyBottom: '#a62c14', platformMain: '#6f2520', platformTop: '#df5a2f', platformBorder: '#34110d', coin: '#ff9f45', enemy: '#ff5f3f' },
-    { name: 'Jungle', skyTop: '#2e7d32', skyBottom: '#7cb342', platformMain: '#3e6b2a', platformTop: '#6fab3c', platformBorder: '#213c17', coin: '#ffe066', enemy: '#a53f2b' },
-    { name: 'Ruines', skyTop: '#5f4b3e', skyBottom: '#bda27f', platformMain: '#8b715a', platformTop: '#b79875', platformBorder: '#4a3a2d', coin: '#f9d27d', enemy: '#7f3d2d' },
-    { name: 'Neon', skyTop: '#111133', skyBottom: '#251a5a', platformMain: '#2b256e', platformTop: '#6c5ce7', platformBorder: '#17133d', coin: '#ff7edb', enemy: '#ff3fa4' },
-    { name: 'Nuit', skyTop: '#050a1c', skyBottom: '#1a2a4a', platformMain: '#2b3f68', platformTop: '#4a6fb0', platformBorder: '#17233f', coin: '#f1f5ff', enemy: '#6e4ec5' },
-    { name: 'Steam', skyTop: '#2b2b2b', skyBottom: '#555555', platformMain: '#6b5b53', platformTop: '#b08b62', platformBorder: '#3b322d', coin: '#ffc857', enemy: '#b84f3a' },
-    { name: 'Cosmos', skyTop: '#120022', skyBottom: '#34004d', platformMain: '#4e2a7a', platformTop: '#8f5bde', platformBorder: '#2a1542', coin: '#9be7ff', enemy: '#ff6ad5' },
+    { name: 'Foret', skyTop: '#79c267', skyBottom: '#bfe8a2', platformMain: '#4f8a3d', platformTop: '#7acb52', platformBorder: '#2c5b24', coin: '#ffd54f', enemy: '#8e3b2f', backgroundImage: 'img/commune.png', backgroundTitle: 'Hotel de ville Belamanana' },
+    { name: 'Desert', skyTop: '#f7b267', skyBottom: '#fceabb', platformMain: '#d39a55', platformTop: '#e7bd79', platformBorder: '#8a5b2d', coin: '#ffcf66', enemy: '#b85c38', backgroundImage: 'img/commune.png', backgroundTitle: 'Hotel de ville Belamanana' },
+    { name: 'Glace', skyTop: '#9ed8ff', skyBottom: '#e5f6ff', platformMain: '#8fd1ea', platformTop: '#d0f3ff', platformBorder: '#4b8ea8', coin: '#d7f8ff', enemy: '#5fa8d3', backgroundImage: 'img/commune.png', backgroundTitle: 'Hotel de ville Belamanana' },
+    { name: 'Lave', skyTop: '#3a0d0d', skyBottom: '#a62c14', platformMain: '#6f2520', platformTop: '#df5a2f', platformBorder: '#34110d', coin: '#ff9f45', enemy: '#ff5f3f', backgroundImage: 'img/commune.png', backgroundTitle: 'Hotel de ville Belamanana' },
+    { name: 'Jungle', skyTop: '#2e7d32', skyBottom: '#7cb342', platformMain: '#3e6b2a', platformTop: '#6fab3c', platformBorder: '#213c17', coin: '#ffe066', enemy: '#a53f2b', backgroundImage: 'img/belamanana.png', backgroundTitle: 'Hotel de ville Belamanana' },
+    { name: 'Ruines', skyTop: '#5f4b3e', skyBottom: '#bda27f', platformMain: '#8b715a', platformTop: '#b79875', platformBorder: '#4a3a2d', coin: '#f9d27d', enemy: '#7f3d2d', backgroundImage: 'img/belamanana.png', backgroundTitle: 'Hotel de ville Belamanana' },
+    { name: 'Neon', skyTop: '#111133', skyBottom: '#251a5a', platformMain: '#2b256e', platformTop: '#6c5ce7', platformBorder: '#17133d', coin: '#ff7edb', enemy: '#ff3fa4', backgroundImage: 'img/belamanana.png', backgroundTitle: 'Hotel de ville Belamanana' },
+    { name: 'Nuit', skyTop: '#050a1c', skyBottom: '#1a2a4a', platformMain: '#2b3f68', platformTop: '#4a6fb0', platformBorder: '#17233f', coin: '#f1f5ff', enemy: '#6e4ec5', backgroundImage: 'img/belamanana.png', backgroundTitle: 'Hotel de ville Belamanana' },
+    { name: 'Steam', skyTop: '#2b2b2b', skyBottom: '#555555', platformMain: '#6b5b53', platformTop: '#b08b62', platformBorder: '#3b322d', coin: '#ffc857', enemy: '#b84f3a', backgroundImage: 'img/belamanana.png', backgroundTitle: 'Hotel de ville Belamanana' },
+    { name: 'Cosmos', skyTop: '#120022', skyBottom: '#34004d', platformMain: '#4e2a7a', platformTop: '#8f5bde', platformBorder: '#2a1542', coin: '#9be7ff', enemy: '#ff6ad5', backgroundImage: 'img/belamanana.png', backgroundTitle: 'Hotel de ville Belamanana' },
 ];
 
 const BASE_MAP = [
@@ -468,6 +489,16 @@ function loseLife() {
         stopThemeMusic();
         statsEndSession();
         showOverlay('Game Over', `Score: ${score}`, 'Rejouer'); 
+        
+        // Mise à jour et affichage du scorecard
+        const sessionTime = stats.totalPlayTimeMs + (statsSessionActive ? performance.now() - stats.sessionStartMs : 0);
+        if (typeof scorecardUI !== 'undefined') {
+            scorecardUI.updateScoreData(score, currentLevel, sessionTime, selectedCharacter, difficulty);
+            setTimeout(() => {
+                scorecardUI.show();
+            }, 500);
+        }
+        
         return; 
     }
     respawn();
@@ -674,6 +705,16 @@ function tryFinishLevel() {
         statsEndSession();
         showOverlay('Victoire', `Score final ${score} | Boss vaincu`, 'Rejouer');
         voiceNarrator.playWin();
+        
+        // Mise à jour et affichage du scorecard
+        const sessionTime = stats.totalPlayTimeMs + (statsSessionActive ? performance.now() - stats.sessionStartMs : 0);
+        if (typeof scorecardUI !== 'undefined') {
+            scorecardUI.updateScoreData(score, currentLevel, sessionTime, selectedCharacter, difficulty);
+            setTimeout(() => {
+                scorecardUI.show();
+            }, 500);
+        }
+        
         return;
     }
     unlockedLevel = Math.max(unlockedLevel, currentLevel + 1);
@@ -692,6 +733,12 @@ function tryFinishLevel() {
     gameState = STATE.LEVEL_CLEAR;
     voiceNarrator.playLevelComplete();
     showOverlay('Niveau termine', `Niveau ${currentLevel + 1} debloque`, 'Suivant');
+    
+    // Mise à jour du scorecard pour LEVEL_CLEAR (optionnel)
+    const sessionTime = stats.totalPlayTimeMs + (statsSessionActive ? performance.now() - stats.sessionStartMs : 0);
+    if (typeof scorecardUI !== 'undefined') {
+        scorecardUI.updateScoreData(score, currentLevel, sessionTime, selectedCharacter, difficulty);
+    }
 }
 
 function updateParticles() {
@@ -711,11 +758,52 @@ function updateCamera() {
 }
 
 function drawBackground() {
+    // Dessiner le gradient de base
     const g = ctx.createLinearGradient(0, 0, 0, CANVAS_H);
     g.addColorStop(0, currentTheme.skyTop);
     g.addColorStop(1, currentTheme.skyBottom);
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+    
+    // Charger et afficher l'image de fond si disponible
+    if (currentTheme.backgroundImage) {
+        // Charger l'image si pas déjà en cache
+        if (!backgroundImageCache[currentTheme.backgroundImage]) {
+            loadBackgroundImage(currentTheme.backgroundImage);
+        }
+        
+        // Si l'image est chargée, l'afficher
+        if (backgroundImageCache[currentTheme.backgroundImage]) {
+            const img = backgroundImageCache[currentTheme.backgroundImage];
+            // Dessiner l'image centrée, adaptée à la taille du canvas
+            const scale = Math.max(CANVAS_W / img.width, CANVAS_H / img.height);
+            const w = img.width * scale;
+            const h = img.height * scale;
+            const x = (CANVAS_W - w) / 2;
+            const y = (CANVAS_H - h) / 2;
+            ctx.globalAlpha = 0.3; // Transparence pour que les éléments du jeu soient visibles
+            ctx.drawImage(img, x, y, w, h);
+            ctx.globalAlpha = 1.0; // Réinitialiser la transparence
+        }
+    }
+    
+    // Afficher le titre si disponible
+    if (currentTheme.backgroundTitle) {
+        ctx.save();
+        ctx.font = 'bold 48px Arial, sans-serif';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        
+        // Ombre pour meilleure lisibilité
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+        ctx.shadowBlur = 8;
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
+        
+        ctx.fillText(currentTheme.backgroundTitle, CANVAS_W / 2, 20);
+        ctx.restore();
+    }
 }
 function drawPlatforms() {
     for (const p of platforms) {
@@ -1026,6 +1114,16 @@ freeModeToggle.addEventListener('change', () => {
     renderLevelButtons();
 });
 difficultySelect.addEventListener('change', () => { difficulty = difficultySelect.value; saveGame(); });
+
+// Share score button
+const shareScoreBtn = document.getElementById('shareScoreBtn');
+if (shareScoreBtn) {
+    shareScoreBtn.addEventListener('click', () => {
+        if (window.scoreCardGenerator) {
+            window.scoreCardGenerator.showShareModal();
+        }
+    });
+}
 
 // Stats panel
 const statsBtn = document.getElementById('statsBtn');

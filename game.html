@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="CSS/controls.css">
     <link rel="stylesheet" href="CSS/stats.css">
     <link rel="stylesheet" href="CSS/settings.css">
+    <link rel="stylesheet" href="CSS/scorecard.css">
     <link rel="icon" type="image/png" href="../mini_jeu_2D/img/favicon.ico" sizes="96x96" />
 </head>
 <body>
@@ -63,6 +64,7 @@
                     <button id="skillsBtn" class="secondary-btn">Compétences</button>
                     <button id="achievementsBtn" class="secondary-btn">Accomplissements</button>
                     <button id="shopBtn" class="secondary-btn">Magasin</button>
+                    <button id="shareScoreBtn" class="secondary-btn share-btn">Partager Score</button>
                     <button id="controlsBtn" class="secondary-btn">Contrôles</button>
                     <div id="options-panel">
                         <label>Personnage
@@ -189,10 +191,61 @@
                 <div>Morts par niveau:</div>
                 <div id="stats-deaths-detail"></div>
             </div>
+
+            <!-- Scorecard Panel -->
+            <div id="scorecardPanel" class="hidden">
+                <button class="scorecard-btn-close" id="closeScorecardBtn">×</button>
+                <div class="scorecard-header">
+                    <h2>🏆 Carte de Score 🏆</h2>
+                </div>
+                <div class="scorecard-preview">
+                    <div id="scorecardImageContainer"></div>
+                </div>
+                <div class="scorecard-stats">
+                    <div class="stat-item">
+                        <div class="stat-label">Score</div>
+                        <div class="stat-value" id="scorecard-score">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Niveau</div>
+                        <div class="stat-value" id="scorecard-level">1</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Temps</div>
+                        <div class="stat-value" id="scorecard-time">00:00</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Personnage</div>
+                        <div class="stat-value" id="scorecard-character">Runner</div>
+                    </div>
+                </div>
+                <div class="social-buttons">
+                    <button class="social-btn social-btn-twitter" id="twitterShareBtn">
+                        𝕏 Twitter/X
+                    </button>
+                    <button class="social-btn social-btn-discord" id="discordShareBtn">
+                        💬 Discord
+                    </button>
+                    <button class="social-btn social-btn-download" id="downloadImageBtn">
+                        ⬇️ Télécharger
+                    </button>
+                </div>
+                <div class="qr-section" id="qrSection">
+                    <p>📱 Code QR pour Mobile</p>
+                    <div class="qr-code" id="qrCodeContainer"></div>
+                </div>
+                <div id="successMessage" class="success-message hidden"></div>
+            </div>
+
+            <!-- Scorecard Overlay -->
+            <div id="scorecardOverlay" class="scorecard-overlay hidden"></div>
         </div>
     </div>
 
     <audio id="bgMusic" loop preload="auto" src="song/Orbia song 2.mp3"></audio>
+
+    <!-- QR Code Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <script src="JS/settings.js"></script>
     <script src="JS/controls.js"></script>
@@ -202,6 +255,8 @@
     <script src="JS/achievements_ui.js"></script>
     <script src="JS/shop.js"></script>
     <script src="JS/shop_ui.js"></script>
+    <script src="JS/scorecard.js"></script>
+    <script src="JS/scorecard_ui.js"></script>
     <script src="JS/voice_narration.js"></script>
     <script src="JS/game.js"></script>
 </body>

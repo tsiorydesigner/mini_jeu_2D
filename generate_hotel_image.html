@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur Image Hotel de Ville Belamanana</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: #333;
+            margin: 0;
+            color: white;
+        }
+        canvas {
+            border: 2px solid white;
+            background: linear-gradient(135deg, #87ceeb 0%, #e0f6ff 100%);
+            margin: 20px 0;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        h1 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Générateur Image: Hôtel de Ville Belamanana</h1>
+    <canvas id="canvas" width="1024" height="768"></canvas>
+    <button onclick="drawHotel()">Générer Image</button>
+    <button onclick="downloadImage()">Télécharger PNG</button>
+    
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        function drawHotel() {
+            // Fond gradient ciel
+            const bgGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            bgGradient.addColorStop(0, '#87CEEB');
+            bgGradient.addColorStop(0.5, '#B0E0E6');
+            bgGradient.addColorStop(1, '#E0F6FF');
+            ctx.fillStyle = bgGradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Soleil
+            ctx.fillStyle = '#FFD700';
+            ctx.beginPath();
+            ctx.arc(150, 100, 50, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = 'rgba(255, 215, 0, 0.2)';
+            ctx.beginPath();
+            ctx.arc(150, 100, 70, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Nuages
+            drawCloud(250, 80, 80, '#FFFFFF');
+            drawCloud(700, 120, 100, '#FFFFFF');
+            drawCloud(900, 70, 90, '#FFFFFF');
+            
+            // Sol
+            ctx.fillStyle = '#8B7355';
+            ctx.fillRect(0, canvas.height - 120, canvas.width, 120);
+            
+            ctx.fillStyle = '#A0826D';
+            ctx.fillRect(0, canvas.height - 100, canvas.width, 20);
+            
+            // Herbe
+            ctx.fillStyle = '#228B22';
+            for (let i = 0; i < canvas.width; i += 30) {
+                ctx.fillRect(i, canvas.height - 120, 20, 30);
+            }
+            
+            // Bâtiment principal (Hôtel de Ville)
+            const buildingX = 250;
+            const buildingY = 300;
+            const buildingW = 500;
+            const buildingH = 280;
+            
+            // Corps du bâtiment
+            ctx.fillStyle = '#CD853F';
+            ctx.fillRect(buildingX, buildingY, buildingW, buildingH);
+            
+            // Bordure
+            ctx.strokeStyle = '#8B4513';
+            ctx.lineWidth = 4;
+            ctx.strokeRect(buildingX, buildingY, buildingW, buildingH);
+            
+            // Fenêtres
+            ctx.fillStyle = '#87CEEB';
+            const windowSpacing = 60;
+            const windowSize = 40;
+            const windowStartX = buildingX + 40;
+            const windowStartY = buildingY + 50;
+            
+            for (let row = 0; row < 3; row++) {
+                for (let col = 0; col < 7; col++) {
+                    const x = windowStartX + col * windowSpacing;
+                    const y = windowStartY + row * windowSpacing;
+                    ctx.fillRect(x, y, windowSize, windowSize);
+                    
+                    // Cadre fenêtre
+                    ctx.strokeStyle = '#696969';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(x, y, windowSize, windowSize);
+                    
+                    // Croix de fenêtre
+                    ctx.beginPath();
+                    ctx.moveTo(x + windowSize / 2, y);
+                    ctx.lineTo(x + windowSize / 2, y + windowSize);
+                    ctx.moveTo(x, y + windowSize / 2);
+                    ctx.lineTo(x + windowSize, y + windowSize / 2);
+                    ctx.stroke();
+                }
+            }
+            
+            // Porte principale
+            ctx.fillStyle = '#8B4513';
+            ctx.fillRect(buildingX + buildingW / 2 - 40, buildingY + buildingH - 80, 80, 80);
+            
+            // Bouton porte
+            ctx.fillStyle = '#FFD700';
+            ctx.beginPath();
+            ctx.arc(buildingX + buildingW / 2, buildingY + buildingH - 40, 8, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Toit (Pignon)
+            ctx.fillStyle = '#DC143C';
+            ctx.beginPath();
+            ctx.moveTo(buildingX, buildingY);
+            ctx.lineTo(buildingX + buildingW / 2, buildingY - 80);
+            ctx.lineTo(buildingX + buildingW, buildingY);
+            ctx.fill();
+            
+            // Cloche/Tour du clocher (au centre du toit)
+            ctx.fillStyle = '#DAA520';
+            ctx.fillRect(buildingX + buildingW / 2 - 30, buildingY - 130, 60, 50);
+            ctx.strokeStyle = '#8B4513';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(buildingX + buildingW / 2 - 30, buildingY - 130, 60, 50);
+            
+            // Cloche
+            ctx.fillStyle = '#FFD700';
+            ctx.beginPath();
+            ctx.arc(buildingX + buildingW / 2, buildingY - 140, 15, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#8B4513';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // Drapeau sur la cloche
+            ctx.fillStyle = '#FF6347';
+            ctx.fillRect(buildingX + buildingW / 2 + 15, buildingY - 155, 30, 20);
+            ctx.strokeStyle = '#8B0000';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(buildingX + buildingW / 2 + 15, buildingY - 155, 30, 20);
+            
+            // Colonnes de support
+            ctx.fillStyle = '#D3D3D3';
+            for (let i = 0; i < 8; i++) {
+                ctx.fillRect(buildingX + 50 + i * 60, buildingY + buildingH, 20, 40);
+            }
+            
+            // Marches
+            ctx.fillStyle = '#A9A9A9';
+            for (let i = 0; i < 3; i++) {
+                ctx.fillRect(buildingX + buildingW / 2 - 60 - i * 20, buildingY + buildingH + 30 + i * 15, 120 + i * 40, 15);
+            }
+            
+            // Texte "Hôtel de Ville Belamanana"
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 36px Arial, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+            ctx.shadowBlur = 6;
+            ctx.shadowOffsetX = 2;
+            ctx.shadowOffsetY = 2;
+            ctx.fillText('Hôtel de Ville Belamanana', canvas.width / 2, canvas.height - 30);
+            ctx.shadowColor = 'transparent';
+        }
+        
+        function drawCloud(x, y, width, color) {
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(x, y, width / 3, 0, Math.PI * 2);
+            ctx.arc(x + width / 3, y - width / 6, width / 3.5, 0, Math.PI * 2);
+            ctx.arc(x + width * 0.66, y, width / 3, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        function downloadImage() {
+            // Créer un lien de téléchargement
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = 'hotel_belamanana.png';
+            link.click();
+        }
+        
+        // Générer l'image au chargement
+        window.onload = drawHotel;
+    </script>
+</body>
+</html>
